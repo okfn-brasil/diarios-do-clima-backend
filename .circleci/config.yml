@@ -6,7 +6,7 @@ jobs:
         environment:
           POSTGRES_USER: postgres
           POSTGRES_DB: postgres
-      - image: circleci/python:3.9
+      - image: cimg/python:3.9
         environment:
           DIARIO_SECRET_KEY: django-insecure-41u6jo_*yg2=1tabsc8ul3-!m!n1hywuj9$t_bv*jb2ju+s9-3
           DIARIO_DEBUG: True
@@ -16,7 +16,6 @@ jobs:
       - checkout
       - run:
           command: |
-            curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python -
             poetry install
       - run:
           name: Running tests
