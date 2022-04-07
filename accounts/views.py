@@ -43,6 +43,7 @@ class UsersMeViewSet(
     mixins.UpdateModelMixin,
     GenericViewSet,
 ):
+    queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
     serializers = {

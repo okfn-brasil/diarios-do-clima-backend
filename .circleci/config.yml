@@ -22,7 +22,7 @@ jobs:
       - run:
           name: Running tests
           command: |            
-            poetry run web/manage.py test
+            poetry run python manage.py test
       - store_artifacts:
           path: test-reports/
           destination: python_app
