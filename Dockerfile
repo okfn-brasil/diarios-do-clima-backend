@@ -1,14 +1,14 @@
-FROM python:3.9-alpine
+FROM python:3.9
+WORKDIR /opt/app
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
-WORKDIR /opt/app
+RUN apt-get update -y
+RUN apt-get install -y python3.9-dev
 
-RUN python -m pip install --upgrade pip
-RUN python -m pip install --upgrade setuptools
-
-COPY requirements.txt requirements.txt
-RUN python -m pip install -r requirements.txt
+RUN pip install poetry
+COPY pyproject.toml poetry.lock ./
+RUN poetry install
 
 COPY . .
