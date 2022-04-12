@@ -1,8 +1,9 @@
+from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 from rest_framework.generics import CreateAPIView, UpdateAPIView, RetrieveUpdateAPIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.tokens import RefreshToken
 from .models import User
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from django.contrib.auth.hashers import make_password
 
 
 class UserOutputSerializer(serializers.ModelSerializer):
@@ -62,6 +63,7 @@ class UsersMeView(
 
 
 class UserCreateInputSerializer(serializers.ModelSerializer):
+    jwt = serializers.SerializerMethodField()
 
     class Meta:
         model = User
@@ -74,15 +76,24 @@ class UserCreateInputSerializer(serializers.ModelSerializer):
             "state",
             "gender",
             "sector",
+            "jwt",
         ]
 
         extra_kwargs = {
             'id': {'read_only': True},
+            'jwt': {'read_only': True},
             'password': {'write_only': True},
         }
 
     def validate_password(self, value: str) -> str:
         return make_password(value)
+
+    def get_jwt(self, user):
+        refresh = RefreshToken.for_user(user)
+        return {
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+        }
 
 
 class UsersView(CreateAPIView):
