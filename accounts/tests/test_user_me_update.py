@@ -81,6 +81,6 @@ class APIUserMeUpdateTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         self.assertEqual(response.data.get(
-            'state', None), data.get('state', None))
-        self.assertEqual(response.data.get('full_name', None),
-                         self.data_user.get('full_name', None))
+            'full_name', None), data.get('full_name', None))
+        self.assertEqual(response.data.get('state', None),
+                         self.data_user.get('state', None))
