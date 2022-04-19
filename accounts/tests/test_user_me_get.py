@@ -1,4 +1,5 @@
 from django.urls import reverse
+from django.conf import settings
 from rest_framework.test import APITestCase, APIClient
 from rest_framework import status
 from ..models import User
@@ -48,3 +49,14 @@ class APIUserMeGetTestCase(APITestCase):
         response = self.client.get(reverse('users_me'))
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        data = response.json()        
+        plan_subscription = data.get('plan_subscription', None)
+        self.assertIsNotNone(plan_subscription)
+
+        plan = plan_subscription.get('plan', None)
+        self.assertIsNotNone(plan)
+        
+        plan_id = plan.get('id', None)
+        self.assertEquals(plan_id, settings.DIARIO_DEFAULT_FREE_PLAN_ID)
+

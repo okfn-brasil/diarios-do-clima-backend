@@ -1,3 +1,8 @@
-from django.shortcuts import render
+from rest_framework.generics import ListAPIView
+from .models import Plan
+from .serializers import PlanSerializer
 
-# Create your views here.
+
+class PlanApiView(ListAPIView):
+    serializer_class = PlanSerializer
+    queryset = Plan.objects.all()
