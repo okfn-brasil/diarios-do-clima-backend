@@ -1,6 +1,10 @@
 from django.contrib import admin
 from .models import User
+from subscriptions.models import PlanSubscription
 
+class PlanSubscriptionsInlineAdmin(admin.StackedInline):
+    model = PlanSubscription
+    extra = 0
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
@@ -10,4 +14,8 @@ class UserAdmin(admin.ModelAdmin):
         'full_name',
         'city',
         'state',
+    )
+
+    inlines = (
+        PlanSubscriptionsInlineAdmin,
     )
