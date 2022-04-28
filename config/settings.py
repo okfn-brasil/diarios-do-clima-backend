@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'accounts.apps.AccountsConfig',
     'plans.apps.PlansConfig',
     'subscriptions.apps.SubscriptionsConfig',
+    'billing.apps.BillingConfig',
 ]
 
 MIDDLEWARE = [
@@ -137,3 +138,6 @@ REST_FRAMEWORK = {
 }
 
 DIARIO_DEFAULT_FREE_PLAN_ID = '482cfe5c-2401-4421-8535-daa42ec1c41d'
+
+DIARIO_PAGSEGURO_EMAIL = config('DIARIO_PAGSEGURO_EMAIL')
+DIARIO_PAGSEGURO_TOKEN = config('DIARIO_PAGSEGURO_TOKEN')
