@@ -5,12 +5,13 @@ from .serializers import SubscribeSerializer
 
 
 class PagSeguroApi(PagSeguroApiABC):
-    def __init__(self, email: str, token: str) -> None:
+    def __init__(self, email: str, token: str, ws_url: str) -> None:
         self.email = email
         self.token = token
+        self.ws_url = ws_url
 
     def get_session(self) -> str:
-        url = f"https://ws.sandbox.pagseguro.uol.com.br/v2/sessions?email={self.email}&token={self.token}"
+        url = f"{self.ws_url}/v2/sessions?email={self.email}&token={self.token}"
         headers = {
             'Content-Type': 'application/x-www-form-urlencoded'
         }
@@ -20,7 +21,7 @@ class PagSeguroApi(PagSeguroApiABC):
         return id.text
 
     def subscribe(self, serializer: SubscribeSerializer) -> str:
-        url = f"https://ws.sandbox.pagseguro.uol.com.br/pre-approvals?email={self.email}&token={self.token}"
+        url = f"{self.ws_url}/pre-approvals?email={self.email}&token={self.token}"
 
         headers = {
             "Accept": "application/vnd.pagseguro.com.br.v3+json;charset=ISO-8859-1",

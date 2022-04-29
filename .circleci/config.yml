@@ -10,6 +10,7 @@ jobs:
           DIARIO_DB_URL: postgres://postgres@localhost/postgres?sslmode=disable
           DIARIO_PAGSEGURO_EMAIL: email@gmail.com
           DIARIO_PAGSEGURO_TOKEN: ADD0FRA720C4B6AA4058FD1F36DAG4
+          DIARIO_PAGSEGURO_WS_URL: https://ws.sandbox.pagseguro.uol.com.br
 
       - image: cimg/postgres:14.2
         environment:
