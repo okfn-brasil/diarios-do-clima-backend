@@ -1,8 +1,9 @@
 class SubscribeSerializer:
 
-    def __init__(self, user, plan_subscription) -> None:
+    def __init__(self, user, plan_subscription, ip: str) -> None:
         self.user = user
         self.plan_subscription = plan_subscription
+        self.ip = ip
 
     def get_sender_phone(self, user) -> dict:
 
@@ -20,7 +21,7 @@ class SubscribeSerializer:
             "city": user.address.city,
             "state": user.address.state,
             "country": user.address.country,
-            "postalCode": user.address.postalCode,
+            "postalCode": user.address.postal_code,
         }
 
     def get_plan_code(self, plan) -> str:
@@ -31,7 +32,7 @@ class SubscribeSerializer:
 
     def get_sender(self, user, ip: str) -> dict:
         return {
-            "name": user.full_name,
+            "name": user.creditcard.holder_name,
             "email": user.email,
             "ip": ip,
             "phone": self.get_sender_phone(user=user),
@@ -39,7 +40,7 @@ class SubscribeSerializer:
             "documents": [
                 {
                     "type": "CPF",
-                    "value": user.cpf
+                    "value": user.creditcard.cpf
                 }
             ]
         }
@@ -51,11 +52,11 @@ class SubscribeSerializer:
                 "token": user.creditcard.token,
                 "holder": {
                     "name": user.creditcard.holder_name,
-                    "birthDate": user.creditcard._holder_bith_date,
+                    "birthDate": str(user.creditcard.holder_birth_date.strftime("%d/%m/%Y")),
                     "documents": [
                         {
                             "type": "CPF",
-                            "value": user.cpf
+                            "value": user.creditcard.cpf
                         }
                     ],
                     "phone": self.get_sender_phone(user=user),
@@ -67,7 +68,7 @@ class SubscribeSerializer:
         data = {
             "plan": self.get_plan_code(plan=self.plan_subscription.plan),
             "reference": self.get_subscription_reference(plan_subscription=self.plan_subscription),
-            "sender": self.get_sender(user=self.user),
+            "sender": self.get_sender(user=self.user, ip=self.ip),
             "paymentMethod": self.get_payment_method(user=self.user)
         }
         return data
