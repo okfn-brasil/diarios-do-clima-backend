@@ -1,5 +1,3 @@
-import requests
-import xml.etree.ElementTree as ET
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.views import APIView
@@ -18,6 +16,9 @@ from .models import (
     Address,
     CreditCard,
 )
+
+from libs.pagseguro import PagSeguroApiABC
+from libs.services import services
 
 
 class PhoneView(RetrieveUpdateAPIView, CreateAPIView):
@@ -65,19 +66,15 @@ class CreditCardView(RetrieveUpdateAPIView, CreateAPIView):
             raise NotFound()
 
 
-class PagSeguroSession(APIView):    
+class PagSeguroSession(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request, **kwargs):
-        url = f"https://ws.sandbox.pagseguro.uol.com.br/v2/sessions?email={settings.DIARIO_PAGSEGURO_EMAIL}&token={settings.DIARIO_PAGSEGURO_TOKEN}"
-        headers = {
-            'Content-Type': 'application/x-www-form-urlencoded'
-        }
-        response = requests.request("POST", url, headers=headers, data={})
-        session = ET.fromstring(response.text)
-        id = session.find('id')
+        pag_seguro_api: PagSeguroApiABC = services.get(PagSeguroApiABC)
+        session = pag_seguro_api.get_session()
+
         return Response(
             data={
-                'session': id.text,
+                'session': session,
             }
         )
