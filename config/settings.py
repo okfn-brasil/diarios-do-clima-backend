@@ -10,9 +10,11 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+from libs.pagseguro import PagSeguroApiABC, PagSeguroApi
 from pathlib import Path
 from decouple import config, Csv
 from dj_database_url import parse as db_url
+from libs.services import services
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -141,3 +143,9 @@ DIARIO_DEFAULT_FREE_PLAN_ID = '482cfe5c-2401-4421-8535-daa42ec1c41d'
 
 DIARIO_PAGSEGURO_EMAIL = config('DIARIO_PAGSEGURO_EMAIL')
 DIARIO_PAGSEGURO_TOKEN = config('DIARIO_PAGSEGURO_TOKEN')
+
+
+services.register(PagSeguroApiABC, PagSeguroApi(
+    email=DIARIO_PAGSEGURO_EMAIL,
+    token=DIARIO_PAGSEGURO_TOKEN,
+))
