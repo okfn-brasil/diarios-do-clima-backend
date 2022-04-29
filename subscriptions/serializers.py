@@ -5,6 +5,7 @@ from .models import PlanSubscription
 class PlanSubscriptionSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlanSubscription
-        fields = (            
-            'plan',            
+        fields = (
+            'plan',
+            'pagseguro_code',
         )
