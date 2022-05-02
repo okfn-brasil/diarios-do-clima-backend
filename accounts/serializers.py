@@ -28,7 +28,6 @@ class UserPlanSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "title",
-            "price",
             "pagseguro_plan_id",
         )
 

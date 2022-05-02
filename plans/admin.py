@@ -6,6 +6,5 @@ class PlanAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'title',
-        'price',
         'pagseguro_plan_id',
     )

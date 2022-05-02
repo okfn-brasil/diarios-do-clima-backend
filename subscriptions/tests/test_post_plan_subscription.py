@@ -38,7 +38,6 @@ class APIPostPlanSubscriptionTestCase(APITestCase):
         cls.plan = Plan(
             id=uuid4(),
             title="Outro Gratis",
-            price=0,
             html="<p>Outro Free Plan</p>"
         )
         cls.plan.save()
@@ -99,8 +98,7 @@ class APIPostPlanSubscriptionTestCase(APITestCase):
         pag_seguro_id = 'pag_seguro_id'
         plan = Plan(
             title="pro teste",
-            html="<p>teste</p>",
-            price=10.00,
+            html="<p>teste</p>",            
             pagseguro_plan_id=pag_seguro_id,
         )
         plan.save()
