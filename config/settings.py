@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_simplejwt',
+    'corsheaders',
     'accounts.apps.AccountsConfig',
     'plans.apps.PlansConfig',
     'subscriptions.apps.SubscriptionsConfig',
@@ -52,6 +53,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -138,6 +140,10 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 30
 }
+
+CORS_ALLOWED_ORIGINS = [
+    'https://sandbox.pagseguro.uol.com.br',
+]
 
 DIARIO_DEFAULT_FREE_PLAN_ID = '482cfe5c-2401-4421-8535-daa42ec1c41d'
 

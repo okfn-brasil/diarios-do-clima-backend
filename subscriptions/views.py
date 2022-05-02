@@ -62,14 +62,14 @@ class PlanSubscriptionApiView(CreateAPIView):
         with transaction.atomic():
             plan_subscription = serializer.save(user=self.request.user)
             plan_subscription.save()
-            plan_subscription_status = PlanSubscriptionStatus(
-                plan_subscription=plan_subscription,
-                pagseguro_data=PlanSubscriptionStatus.DATA_ACTIVE,
-            )
-            plan_subscription_status.save()
             plan: Plan = plan_subscription.plan
 
             if not plan.to_charge():
+                plan_subscription_status = PlanSubscriptionStatus(
+                    plan_subscription=plan_subscription,
+                    pagseguro_data=PlanSubscriptionStatus.DATA_ACTIVE,
+                )
+                plan_subscription_status.save()
                 return
 
             pag_seguro_api: PagSeguroApiABC = services.get(PagSeguroApiABC)
