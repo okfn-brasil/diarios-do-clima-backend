@@ -1,0 +1,2 @@
+class PreApprovalsValidationException(Exception):
+    pass
