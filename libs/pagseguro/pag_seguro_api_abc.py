@@ -38,7 +38,6 @@ class PreApprovalNotification:
         }
     }
     """
-    name: str
     code: str
     date: str
     status: str

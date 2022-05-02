@@ -55,8 +55,7 @@ class PagSeguroApi(PagSeguroApiABC):
             raise Exception(response.json())
 
         data = response.json()
-        return PreApprovalNotification(
-            name=data['name'],
+        return PreApprovalNotification(            
             code=data['code'],
             date=data['date'],
             status=data['status'],
