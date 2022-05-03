@@ -38,7 +38,7 @@ class NotificationsApiView(APIView):
             )
             plan_subscription_status.save()
 
-    def plan_subscription_local_cancel(self):
+    def plan_subscription_cancel(self):
         current_plan_subscription = user_get_latest_plan_subscription(
             user=self.plan_subscription.user
         )
@@ -59,6 +59,6 @@ class NotificationsApiView(APIView):
         )
 
         if self.notification.status in PlanSubscriptionStatus.DATA_CANCELLED_LIST:
-            self.plan_subscription_local_cancel()
+            self.plan_subscription_cancel()
 
         return Response()
