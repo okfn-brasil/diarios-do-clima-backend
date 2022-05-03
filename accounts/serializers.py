@@ -6,6 +6,7 @@ from .models import User
 from .selectors import user_get_current_plan_subscription
 from plans.models import Plan
 from subscriptions.models import PlanSubscription, PlanSubscriptionStatus
+from subscriptions.selectors import plan_subscription_get_latest_status
 
 
 class UserInputSerializer(serializers.ModelSerializer):
@@ -28,7 +29,6 @@ class UserPlanSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "title",
-            "price",
             "pagseguro_plan_id",
         )
 
@@ -58,8 +58,8 @@ class UserPlanSubscriptionSerializer(serializers.ModelSerializer):
 
     def get_status(self, plan_subscription):
         try:
-            plan_subscription_status = PlanSubscriptionStatus.objects.filter(
-                plan_subscription=plan_subscription).latest('created_at')
+            plan_subscription_status = plan_subscription_get_latest_status(
+                plan_subscription=plan_subscription)
             plan_subscription_status_serializer = UserPlanSubscriptionStatusSerializer(
                 plan_subscription_status)
             return plan_subscription_status_serializer.data

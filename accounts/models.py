@@ -8,7 +8,6 @@ from django.contrib.auth.models import (
     UserManager as AuthUserManager,
 )
 from django.contrib.auth.hashers import make_password
-from django.contrib import auth
 
 
 class UserManager(AuthUserManager):
@@ -44,7 +43,6 @@ class UserManager(AuthUserManager):
             raise ValueError("Superuser must have is_superuser=True.")
 
         return self._create_user(email, password, **extra_fields)
-    
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -52,7 +50,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(default=uuid.uuid4, primary_key=True)
     email = models.EmailField(unique=True)
     full_name = models.CharField(max_length=60)
-    city = models.CharField(max_length=255)
+    city = models.CharField(max_length=50)
     state = models.CharField(max_length=2)
     gender = models.CharField(max_length=2)
     sector = models.CharField(max_length=10)

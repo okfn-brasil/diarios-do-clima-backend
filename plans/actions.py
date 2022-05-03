@@ -12,7 +12,6 @@ def get_or_create_default_plan():
         plan = Plan(
             id=settings.DIARIO_DEFAULT_FREE_PLAN_ID,
             title="Gratis",
-            price=0,
             html="<p>Default Free Plan</p>"
         )
         plan.save()
