@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import transaction
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
@@ -5,6 +6,9 @@ from rest_framework.generics import CreateAPIView
 from rest_framework.response import Response
 from .models import PlanSubscription, PlanSubscriptionStatus, Plan
 from .serializers import PlanSubscriptionSerializer
+from .selectors import user_get_latest_plan_subscription
+from .actions import user_plan_subscription_cancel
+from billing.selectors import user_get_current_credit_card
 from libs.services import services
 from libs.pagseguro import PagSeguroApiABC, PreApprovalNotification
 from libs.pagseguro.serializers import SubscribeSerializer
@@ -31,7 +35,7 @@ class NotificationsApiView(APIView):
             return Response()
 
         pag_seguro_api: PagSeguroApiABC = services.get(PagSeguroApiABC)
-        notification: PreApprovalNotification = pag_seguro_api.pre_approvals_get_notification(
+        notification: PreApprovalNotification = pag_seguro_api.subscription_get_notification(
             notification_code=notification_code)
 
         plan_subscription = PlanSubscription.objects.get(
@@ -52,8 +56,12 @@ class NotificationsApiView(APIView):
                 pagseguro_notification_code=notification_code,
                 pagseguro_notification_date=pagseguro_notification_date
             )
-
             plan_subscription_status.save()
+
+        if notification.status in PlanSubscriptionStatus.DATA_CANCELLED_LIST:
+            user_plan_subscription_cancel(
+                user=plan_subscription.user,
+            )
 
         return Response()
 
@@ -82,8 +90,29 @@ class PlanSubscriptionApiView(CreateAPIView):
             subscribe_serializer = SubscribeSerializer(
                 user=self.request.user,
                 plan_subscription=plan_subscription,
+                credit_card=user_get_current_credit_card(
+                    user=self.request.user
+                ),
                 ip=get_client_ip(self.request)
             )
-            code = pag_seguro_api.subscribe(serializer=subscribe_serializer)
+            code = pag_seguro_api.subscription_create(
+                serializer=subscribe_serializer)
             plan_subscription.pagseguro_code = code
             plan_subscription.save()
+
+
+class PlanSubscriptionCancelAPIView(APIView):
+    def post(self, request, *args, **kwargs):
+        plan_subscription: PlanSubscription = user_get_latest_plan_subscription(
+            user=self.request.user,
+        )
+        plan: Plan = plan_subscription.plan
+        if str(plan.id) == settings.DIARIO_DEFAULT_FREE_PLAN_ID:
+            raise Exception("can not cancel default free plan")
+
+        pag_seguro_api: PagSeguroApiABC = services.get(PagSeguroApiABC)
+        pag_seguro_api.subscription_cancel(
+            subscription_code=plan_subscription.pagseguro_code
+        )
+
+        return Response()
