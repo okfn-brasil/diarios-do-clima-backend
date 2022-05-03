@@ -50,9 +50,13 @@ class PagSeguroApiABC(abc.ABC):
         """get a pagseguro session id"""
 
     @abc.abstractmethod
-    def subscribe(self, serializer: SubscribeSerializer) -> str:
+    def subscription_create(self, serializer: SubscribeSerializer) -> str:
         """create plan subscription"""
 
     @abc.abstractmethod
-    def pre_approvals_get_notification(self, notification_code: str) -> PreApprovalNotification:
-        """create plan subscription"""
+    def subscription_cancel(self, subscription_code: str) -> None:
+        """cancel plan subscription"""
+
+    @abc.abstractmethod
+    def subscription_get_notification(self, notification_code: str) -> PreApprovalNotification:
+        """get plan subscription notification"""
