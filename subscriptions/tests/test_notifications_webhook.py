@@ -51,7 +51,7 @@ class APIPlanSubscriptionNotificationsWebhookTestCase(APITestCase):
         }
 
         PagSeguroApiMock = mock.Mock(spec=PagSeguroApiABC)
-        PagSeguroApiMock.pre_approvals_get_notification.return_value = PreApprovalNotification(
+        PagSeguroApiMock.subscription_get_notification.return_value = PreApprovalNotification(
             code=subscription_code,
             date=notification_date,
             status=PlanSubscriptionStatus.DATA_CANCELLED,
