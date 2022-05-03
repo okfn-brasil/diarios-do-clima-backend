@@ -5,7 +5,7 @@ from subscriptions.models import PlanSubscription, PlanSubscriptionStatus
 User = get_user_model()
 
 
-def get_or_create_default_plan():
+def get_or_create_default_plan() -> Plan:
     try:
         plan = Plan.objects.get(pk=settings.DIARIO_DEFAULT_FREE_PLAN_ID)
     except Plan.DoesNotExist:
@@ -19,7 +19,8 @@ def get_or_create_default_plan():
     return plan
 
 
-def create_user_default_plan_subscription(user: User, plan: Plan):
+def create_user_default_plan_subscription(user: User) -> None:
+    plan = get_or_create_default_plan()
     plan_subscription = PlanSubscription(
         user=user,
         plan=plan,
