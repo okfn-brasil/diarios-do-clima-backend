@@ -8,6 +8,7 @@ from .serializers import PlanSubscriptionSerializer
 from libs.services import services
 from libs.pagseguro import PagSeguroApiABC, PreApprovalNotification
 from libs.pagseguro.serializers import SubscribeSerializer
+from django.utils import timezone
 
 
 def get_client_ip(request):
@@ -30,11 +31,15 @@ class NotificationsApiView(APIView):
             return Response()
 
         pag_seguro_api: PagSeguroApiABC = services.get(PagSeguroApiABC)
-        notification = pag_seguro_api.pre_approvals_get_notification(
+        notification: PreApprovalNotification = pag_seguro_api.pre_approvals_get_notification(
             notification_code=notification_code)
 
         plan_subscription = PlanSubscription.objects.get(
             pagseguro_code=notification.code,
+        )
+        pagseguro_notification_date = timezone.datetime.strptime(
+            notification.date,
+            '%Y-%m-%dT%H:%M:%S%z',
         )
 
         try:
@@ -45,6 +50,7 @@ class NotificationsApiView(APIView):
                 plan_subscription=plan_subscription,
                 pagseguro_data=notification.status,
                 pagseguro_notification_code=notification_code,
+                pagseguro_notification_date=pagseguro_notification_date
             )
 
             plan_subscription_status.save()

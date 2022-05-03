@@ -7,7 +7,7 @@ from subscriptions.models import PlanSubscription, PlanSubscriptionStatus
 from subscriptions.selectors import plan_subscription_get_latest_status
 from libs.services import services
 from libs.pagseguro import PagSeguroApiABC, PreApprovalNotification
-
+from django.utils import timezone
 
 class APIPlanSubscriptionNotificationsWebhookTestCase(APITestCase):
 
@@ -35,7 +35,9 @@ class APIPlanSubscriptionNotificationsWebhookTestCase(APITestCase):
     def test_webhook_created_new_status(self):
         notification_type = 'preApproval'
         notification_code = 'notification_code'
+        notification_date = '2022-04-29T15:53:17-03:00'
         subscription_code = 'subscription_code'
+        
 
         plan_subscription = PlanSubscription.objects.get(
             user=self.user,
@@ -51,7 +53,7 @@ class APIPlanSubscriptionNotificationsWebhookTestCase(APITestCase):
         PagSeguroApiMock = mock.Mock(spec=PagSeguroApiABC)
         PagSeguroApiMock.pre_approvals_get_notification.return_value = PreApprovalNotification(
             code=subscription_code,
-            date="2022-04-29T15:53:17-03:00",
+            date=notification_date,
             status=PlanSubscriptionStatus.DATA_CANCELLED,
         )
 
@@ -71,4 +73,13 @@ class APIPlanSubscriptionNotificationsWebhookTestCase(APITestCase):
         self.assertEquals(
             latest_plan_subscription_status.pagseguro_data,
             PlanSubscriptionStatus.DATA_CANCELLED,
+        )
+
+        date = timezone.datetime.strptime(
+            notification_date,
+            '%Y-%m-%dT%H:%M:%S%z',
+        )
+        self.assertEquals(
+            latest_plan_subscription_status.pagseguro_notification_date,
+            date,
         )
