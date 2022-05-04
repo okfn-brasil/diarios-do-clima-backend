@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'plans.apps.PlansConfig',
     'subscriptions.apps.SubscriptionsConfig',
     'billing.apps.BillingConfig',
+    'reports.apps.ReportsConfig',
 ]
 
 MIDDLEWARE = [
@@ -126,6 +127,9 @@ USE_TZ = True
 
 STATIC_URL = 'api/static/'
 STATIC_ROOT = Path(BASE_DIR, 'static')
+
+MEDIA_URL = 'media/'
+MEDIA_ROOT = Path(BASE_DIR, 'media')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
