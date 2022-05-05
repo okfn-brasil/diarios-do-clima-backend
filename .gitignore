@@ -3,3 +3,4 @@
 .devcontainer
 .idea
 static/*
+media/*
