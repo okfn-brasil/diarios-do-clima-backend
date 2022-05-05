@@ -48,42 +48,42 @@ class APIReportsTestCase(APITestCase):
         file_mock = mock.MagicMock(spec=File, name='FileMock')
         file_mock.name = 'test1.jpg'
 
-        report = Report(
+        self.public_report = Report(
             title='report 1',
             description='report 1',
             is_public=True,
             file=file_mock,
         )
 
-        report.save()
+        self.public_report.save()
 
     def setUpReportsPrivate(self):
         file_mock = mock.MagicMock(spec=File, name='FileMock')
         file_mock.name = 'test2.jpg'
 
-        report = Report(
+        self.private_report = Report(
             title='report 2',
             description='report 2',
             is_public=False,
             file=file_mock,
         )
 
-        report.save()
+        self.private_report.save()
 
     def setUpReportsPrivateForUser(self):
         file_mock = mock.MagicMock(spec=File, name='FileMock')
         file_mock.name = 'test3.jpg'
 
-        report = Report(
+        self.user_report = Report(
             title='report 3',
             description='report 3',
             is_public=False,
             file=file_mock,
         )
-        report.save()
+        self.user_report.save()
 
         report_access = ReportUserAccess(
-            report=report,
+            report=self.user_report,
             user=self.user,
         )
         report_access.save()
@@ -126,3 +126,46 @@ class APIReportsTestCase(APITestCase):
         results = data.get('results', None)
         self.assertNotEquals(results, None)
         self.assertEquals(len(results), 1)
+
+    def test_get_one_public(self):
+        self.login()
+        self.setUpReportsPublic()
+
+        response = self.client.get(
+            reverse('reports', kwargs={'pk': str(self.public_report.pk)}),
+        )
+
+        self.assertEquals(response.status_code, status.HTTP_200_OK)
+        data: dict = response.json()
+        id = data.get('id', None)
+        self.assertNotEquals(id, None)
+        self.assertEquals(id, str(self.public_report.pk))
+
+    def test_get_one_private_report(self):
+        self.login()
+        self.setUpReportsPublic()
+        self.setUpReportsPrivate()
+
+        response = self.client.get(
+            reverse('reports', kwargs={'pk': str(self.private_report.pk)}),
+        )
+
+        self.assertEquals(response.status_code, status.HTTP_404_NOT_FOUND)
+        data: dict = response.json()
+        self.assertEquals(data, {'detail': 'Não encontrado.'})
+
+    def test_get_one_user_report_private(self):
+        self.login()
+        self.setUpReportsPublic()
+        self.setUpReportsPrivate()
+        self.setUpReportsPrivateForUser()
+
+        response = self.client.get(
+            reverse('reports', kwargs={'pk': str(self.user_report.pk)}),
+        )
+
+        self.assertEquals(response.status_code, status.HTTP_200_OK)
+        data: dict = response.json()
+        id = data.get('id', None)
+        self.assertNotEquals(id, None)
+        self.assertEquals(id, str(self.user_report.pk))
