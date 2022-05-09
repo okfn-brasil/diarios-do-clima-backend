@@ -1,6 +1,6 @@
 import abc
 from dataclasses import dataclass
-from .serializers import SubscribeSerializer
+from .serializers import SubscribeSerializer, CreditCardChangeData
 
 
 @dataclass
@@ -60,3 +60,7 @@ class PagSeguroApiABC(abc.ABC):
     @abc.abstractmethod
     def subscription_get_notification(self, notification_code: str) -> PreApprovalNotification:
         """get plan subscription notification"""
+
+    @abc.abstractmethod
+    def subscription_change_credit_card(self, subscription_code: str, data: CreditCardChangeData):
+        pass
