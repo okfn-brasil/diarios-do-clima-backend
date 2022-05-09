@@ -8,15 +8,8 @@ from billing.selectors import user_get_current_credit_card
 from libs.services import services
 from libs.pagseguro import PagSeguroApiABC
 from libs.pagseguro.serializers import SubscribeSerializer
+from libs.get_client_ip import get_client_ip
 
-
-def get_client_ip(request):
-    x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
-    if x_forwarded_for:
-        ip = x_forwarded_for.split(',')[0]
-    else:
-        ip = request.META.get('REMOTE_ADDR')
-    return ip
 
 
 class PlanSubscriptionApiView(CreateAPIView):
