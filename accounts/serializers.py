@@ -7,6 +7,9 @@ from .selectors import user_get_current_plan_subscription
 from plans.models import Plan
 from subscriptions.models import PlanSubscription, PlanSubscriptionStatus
 from subscriptions.selectors import plan_subscription_get_latest_status
+from billing.serializers import CreditCardSerializer, AddressSerializer, PhoneSerializer
+from billing.selectors import user_get_current_credit_card
+from billing.models import CreditCard
 
 
 class UserInputSerializer(serializers.ModelSerializer):
@@ -117,6 +120,11 @@ class UserCreateInputSerializer(serializers.ModelSerializer, UserPlanSubscriptio
 
 
 class UserOutputSerializer(UserPlanSubscriptionSerializerMixin, serializers.ModelSerializer):
+
+    credit_card = serializers.SerializerMethodField()
+    address = AddressSerializer(read_only=True)
+    phone = PhoneSerializer(read_only=True)
+
     class Meta:
         model = User
         fields = [
@@ -127,7 +135,21 @@ class UserOutputSerializer(UserPlanSubscriptionSerializerMixin, serializers.Mode
             "state",
             "gender",
             "sector",
+            "address",
+            "phone",
+            "credit_card",
             "plan_subscription",
             "last_login",
             "date_joined",
         ]
+
+    def get_credit_card(self, user):
+        try:
+            credit_card = user_get_current_credit_card(user=user)
+        except CreditCard.DoesNotExist:
+            return None
+
+        credit_card_serializer = CreditCardSerializer(
+            credit_card,
+        )
+        return credit_card_serializer.data
