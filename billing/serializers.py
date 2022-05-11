@@ -41,4 +41,5 @@ class CreditCardSerializer(serializers.ModelSerializer):
             "holder_name",
             "holder_birth_date",
             "cpf",
+            "created_at",
         )

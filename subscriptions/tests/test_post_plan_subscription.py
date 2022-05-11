@@ -137,7 +137,7 @@ class APIPostPlanSubscriptionTestCase(APITestCase):
 
         PagSeguroApiMock = mock.Mock(spec=PagSeguroApiABC)
         subscription_code = 'mock_sub_code'
-        PagSeguroApiMock.subscribe.return_value = subscription_code
+        PagSeguroApiMock.subscription_create.return_value = subscription_code
         services.register(PagSeguroApiABC, PagSeguroApiMock)
 
         login_response = self.client.post(

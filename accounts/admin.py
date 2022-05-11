@@ -16,6 +16,11 @@ class UserAdmin(admin.ModelAdmin):
         'state',
     )
 
+    search_fields = (
+        'email',
+        'full_name',
+    )
+
     inlines = (
         PlanSubscriptionsInlineAdmin,
     )

@@ -53,7 +53,6 @@ class APIUserMeUpdateTestCase(APITestCase):
         data['state'] = 'TO'
 
         response = self.client.put(reverse('users_me'), data)
-
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data.get(
             'state', None), data.get('state', None))
