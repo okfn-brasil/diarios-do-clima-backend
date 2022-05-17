@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from libs.pagseguro import PagSeguroApiABC, PagSeguroApi
+from libs.querido_diario import QueridoDiarioABC, QueridoDiario
 from pathlib import Path
 from decouple import config, Csv
 from dj_database_url import parse as db_url
@@ -49,6 +50,7 @@ INSTALLED_APPS = [
     'subscriptions.apps.SubscriptionsConfig',
     'billing.apps.BillingConfig',
     'reports.apps.ReportsConfig',
+    'querido_diario.apps.QueridoDiarioConfig',
 ]
 
 MIDDLEWARE = [
@@ -161,3 +163,9 @@ services.register(PagSeguroApiABC, PagSeguroApi(
     token=DIARIO_PAGSEGURO_TOKEN,
     ws_url=DIARIO_PAGSEGURO_WS_URL,
 ))
+
+DIARIO_QUERIDO_DIARIO_API_URL = config('DIARIO_QUERIDO_DIARIO_API_URL')
+
+services.register(QueridoDiarioABC, QueridoDiario(
+    api_url=DIARIO_QUERIDO_DIARIO_API_URL)
+)
