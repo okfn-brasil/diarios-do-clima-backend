@@ -2,6 +2,7 @@ from typing import List
 import abc
 from .serializers import GazettesResult, GazetteFilters
 
+
 class QueridoDiarioABC(abc.ABC):
 
     @abc.abstractmethod
@@ -9,7 +10,7 @@ class QueridoDiarioABC(abc.ABC):
         """get querido diario cnpj info"""
 
     @abc.abstractmethod
-    def cnpj_list_partners(self, cnpj:str) -> List[dict]:
+    def cnpj_list_partners(self, cnpj: str) -> List[dict]:
         """get cnpj partners list"""
 
     @abc.abstractmethod
