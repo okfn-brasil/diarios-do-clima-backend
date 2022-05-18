@@ -5,6 +5,10 @@ from rest_framework import status
 from accounts.models import User
 from plans.models import Plan
 from subscriptions.models import PlanSubscription, PlanSubscriptionStatus
+from libs.services import services
+from libs.querido_diario import QueridoDiarioABC
+from libs.querido_diario.serializers import GazettesResult
+from unittest import mock
 
 
 class APIGazettesTestCase(APITestCase):
@@ -33,6 +37,12 @@ class APIGazettesTestCase(APITestCase):
         super().setUpClass()
         cls.client = APIClient()
         cls.setUpUser()
+        cls.QueridoDiarioMock = mock.MagicMock(spec=QueridoDiarioABC)
+        services.register(QueridoDiarioABC, cls.QueridoDiarioMock)
+        cls.QueridoDiarioMock.gazettes.return_value = GazettesResult(
+            total_gazettes=0,
+            gazettes=[],
+        )
 
     def login(self):
         login_response = self.client.post(

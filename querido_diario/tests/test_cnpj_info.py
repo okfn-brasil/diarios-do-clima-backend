@@ -1,7 +1,11 @@
 from django.urls import reverse
 from rest_framework.test import APITestCase, APIClient
+from rest_framework.exceptions import NotFound
 from rest_framework import status
 from accounts.models import User
+from libs.services import services
+from libs.querido_diario import QueridoDiarioABC
+from unittest import mock
 
 
 class APICNPJTestCase(APITestCase):
@@ -30,6 +34,8 @@ class APICNPJTestCase(APITestCase):
         super().setUpClass()
         cls.client = APIClient()
         cls.setUpUser()
+        cls.QueridoDiarioMock = mock.MagicMock(spec=QueridoDiarioABC)
+        services.register(QueridoDiarioABC, cls.QueridoDiarioMock)
 
     def login(self):
         login_response = self.client.post(
@@ -41,6 +47,10 @@ class APICNPJTestCase(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION='Bearer ' + access)
 
     def test_cnpj_info_get_without_user(self):
+
+        self.QueridoDiarioMock.cnpj_info.return_value = {
+            'cnpj_completo_apenas_numeros': '12345678901234',
+        }
         response = self.client.get(
             reverse('cnpjs', kwargs={'cnpj': '60691894000135'}),
         )
@@ -48,13 +58,22 @@ class APICNPJTestCase(APITestCase):
 
     def test_cnpj_info_get_with_user_not_found(self):
         self.login()
+
+        self.QueridoDiarioMock.cnpj_info.side_effect = NotFound(
+            "CNPJ não encontrado!")
+
         response = self.client.get(
-            reverse('cnpjs', kwargs={'cnpj': '60691894000135'}),
+            reverse('cnpjs', kwargs={'cnpj': '12345678901234'}),
         )
         self.assertEquals(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_cnpj_info_get_with_user(self):
         self.login()
+
+        self.QueridoDiarioMock.cnpj_info.return_value = {
+            'cnpj_completo_apenas_numeros': '12345678901234',
+        }
+
         cnpj = '12345678901234'
         response = self.client.get(
             reverse('cnpjs', kwargs={'cnpj': cnpj}),
