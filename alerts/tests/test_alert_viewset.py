@@ -65,7 +65,7 @@ class TestAlertViewSet(APITestCase):
                 "la",
                 "SF"
             ],
-            gov_entites=[
+            gov_entities=[
                 "django",
                 "hell",
                 "SF"
@@ -83,7 +83,7 @@ class TestAlertViewSet(APITestCase):
                 "la",
                 "SF"
             ],
-            gov_entites=[
+            gov_entities=[
                 "django",
                 "hell",
                 "SF"
@@ -121,7 +121,7 @@ class TestAlertViewSet(APITestCase):
                 'SFA',
                 'DSEI'
             ],
-            'gov_entites': [
+            'gov_entities': [
                 'SESAI',
             ],
 
@@ -147,7 +147,7 @@ class TestAlertViewSet(APITestCase):
                 'SFA',
                 'DSEI'
             ],
-            'gov_entites': [
+            'gov_entities': [
                 'SESAI',
                 'FUNASA',
                 'FUNAI',
@@ -163,7 +163,7 @@ class TestAlertViewSet(APITestCase):
         self.assertEquals(alert.query_string, alert_data['query_string'])
         self.assertEquals(alert.territory_id, alert_data['territory_id'])
         self.assertEquals(alert.sub_themes, alert_data['sub_themes'])
-        self.assertEquals(alert.gov_entites, alert_data['gov_entites'])
+        self.assertEquals(alert.gov_entities, alert_data['gov_entities'])
 
     def test_delete_user_alert(self):
         self.login()

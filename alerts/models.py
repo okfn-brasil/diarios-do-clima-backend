@@ -10,14 +10,14 @@ class Alert(models.Model):
     id = models.UUIDField(default=uuid4, primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     query_string = models.CharField(max_length=255)
-    territory_id = models.CharField(max_length=7)
+    territory_id = models.CharField(max_length=7, null=True, blank=True)
     sub_themes = ArrayField(
         models.CharField(
             max_length=50,
         ),
         blank=True, null=True,
     )
-    gov_entites = ArrayField(
+    gov_entities = ArrayField(
         models.CharField(
             max_length=50,
         ),
