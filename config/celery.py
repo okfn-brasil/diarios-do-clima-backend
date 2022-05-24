@@ -4,6 +4,7 @@ from celery import Celery
 from celery.schedules import crontab
 # TODO: add django-celery-beat when django 4 suport is added
 # https://github.com/celery/django-celery-beat
+
 # Set the default Django settings module for the 'celery' program.
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.settings')
 
@@ -16,25 +17,14 @@ app = Celery('diario-do-clima-backend')
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
 
-"""
 app.conf.beat_schedule = {
-    'add-every-30-seconds': {
-        'task': 'tasks.add',
-        'schedule': 30.0,
-        'args': (16, 16)
+    'run-every-day-at-01am': {
+        'task': 'alerts.tasks.daily_setup_task',
+        'schedule': crontab(hour=1),
+        #'schedule': 10.0,
     },
 }
 
-
-@app.on_after_configure.connect
-def setup_periodic_tasks(sender, **kwargs):
-    sender.add_periodic_task(
-        crontab(hour=1),
-        test.s('Happy Mondays!'),
-    )
-"""
-
-# Load task modules from all registered Django apps.
 app.autodiscover_tasks()
 
 

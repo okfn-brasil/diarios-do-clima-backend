@@ -153,6 +153,11 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 CELERY_BROKER_URL = config('CELERY_BROKER_URL')
+CELERY_RESULT_BACKEND = config('CELERY_BROKER_URL')
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'America/Sao_Paulo'
 
 DIARIO_DEFAULT_FREE_PLAN_ID = '482cfe5c-2401-4421-8535-daa42ec1c41d'
 
@@ -170,5 +175,20 @@ services.register(PagSeguroApiABC, PagSeguroApi(
 DIARIO_QUERIDO_DIARIO_API_URL = config('DIARIO_QUERIDO_DIARIO_API_URL')
 
 services.register(QueridoDiarioABC, QueridoDiario(
-    api_url=DIARIO_QUERIDO_DIARIO_API_URL)
-)
+    api_url=DIARIO_QUERIDO_DIARIO_API_URL,
+))
+
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
+#EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'
+#EMAIL_BACKEND = 'django.core.mail.backends.locmem.EmailBackend'
+
+EMAIL_FILE_PATH = Path(BASE_DIR, 'emails')
+
+EMAIL_HOST = config('EMAIL_HOST')
+EMAIL_HOST_USER = config('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+EMAIL_PORT = config('EMAIL_PORT')
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = 'default from email'
