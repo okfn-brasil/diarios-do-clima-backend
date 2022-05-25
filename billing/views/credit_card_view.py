@@ -24,6 +24,7 @@ from libs.pagseguro.serializers import (
 )
 from libs.services import services
 from libs.get_client_ip import get_client_ip
+from libs.utils.datetime import datetime_to_date_str
 from django.db import transaction
 
 
@@ -57,7 +58,7 @@ def get_credit_card_holder(user: User, credit_card: CreditCard) -> CreditCardHol
         name=credit_card.holder_name,
         biling_phone=get_billing_phone(user=user),
         billing_address=get_billing_address(user=user),
-        bith_date=str(credit_card.holder_birth_date.strftime("%d/%m/%Y")),
+        bith_date=datetime_to_date_str(date=credit_card.holder_birth_date),
         documents=[
             BillingDocumentData(
                 type='CPF',
