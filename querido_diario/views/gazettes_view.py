@@ -9,7 +9,7 @@ from plans.models import Plan
 from subscriptions.models import PlanSubscription
 from subscriptions.selectors import user_get_latest_plan_subscription
 from django.utils import timezone
-
+from libs.utils.datetime import datetime_from_date_str_diario
 
 class GazettesView(APIView):
     permission_classes = [IsAuthenticated]
@@ -64,11 +64,8 @@ class GazettesView(APIView):
 
     def pro_since_validation(self):
         if self.since is not None:
-            today: timezone.datetime = timezone.now()
-            since_date_format = "%Y-%m-%d"
-            since_date: timezone.datetime = timezone.datetime.strptime(
-                self.since, since_date_format
-            )
+            today: timezone.datetime = timezone.now()            
+            since_date = datetime_from_date_str_diario(date=self.since)            
             since_date = timezone.make_aware(since_date)            
             
 

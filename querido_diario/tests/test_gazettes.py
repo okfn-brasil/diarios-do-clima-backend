@@ -9,6 +9,7 @@ from libs.services import services
 from libs.querido_diario import QueridoDiarioABC
 from libs.querido_diario.serializers import GazettesResult
 from unittest import mock
+from libs.utils.datetime import datetime_to_date_str_diario
 
 
 class APIGazettesTestCase(APITestCase):
@@ -92,8 +93,7 @@ class APIGazettesTestCase(APITestCase):
         today = timezone.now()
         delta = timezone.timedelta(days=90)
         diff: timezone.datetime = today - delta
-        since_date_format = "%Y-%m-%d"
-        date_str = diff.strftime(since_date_format)
+        date_str = datetime_to_date_str_diario(date=diff)
         response = self.client.get(
             reverse('gazettes') + f'?since={date_str}',
         )
