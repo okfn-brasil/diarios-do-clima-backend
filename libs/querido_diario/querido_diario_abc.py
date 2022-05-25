@@ -10,7 +10,7 @@ class QueridoDiarioABC(abc.ABC):
         """get querido diario cnpj info"""
 
     @abc.abstractmethod
-    def cnpj_list_partners(self, cnpj: str) -> List[dict]:
+    def cnpj_list_partners(self, cnpj: str) -> dict:
         """get cnpj partners list"""
 
     @abc.abstractmethod

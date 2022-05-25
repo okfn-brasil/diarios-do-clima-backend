@@ -13,7 +13,7 @@ class QueridoDiario(QueridoDiarioABC):
     def cnpj_info(self, cnpj: str) -> dict:
         """get querido diario cnpj info"""
 
-        url = f"{self.api_url}/cnpj/info/{cnpj}"
+        url = f"{self.api_url}/api/company/info/{cnpj}"
         response = requests.get(url)
         if response.status_code != 200:
             raise NotFound("CNPJ não encontrado!")
@@ -21,9 +21,9 @@ class QueridoDiario(QueridoDiarioABC):
         data = response.json()
         return data
 
-    def cnpj_list_partners(self, cnpj: str) -> List[dict]:
+    def cnpj_list_partners(self, cnpj: str) -> dict:
         """get cnpj partners list"""
-        url = f"{self.api_url}/cnpj/socios/{cnpj}"
+        url = f"{self.api_url}/api/company/partners/{cnpj}"
         response = requests.get(url)
         if response.status_code != 200:
             raise NotFound("CNPJ não encontrado!")
