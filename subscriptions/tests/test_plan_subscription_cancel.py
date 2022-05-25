@@ -72,6 +72,7 @@ class APIPlanSubscriptionCancelTestCase(APITestCase):
             title="Outro Gratis",
             html="<p>Outro Free Plan</p>",
             pagseguro_plan_id='code',
+            trial_days=7,
         )
         plan.save()
         plan_subscription = PlanSubscription(
