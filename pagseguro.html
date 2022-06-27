@@ -1,0 +1,34 @@
+<html>
+
+<head>
+    <script src="https://assets.pagseguro.com.br/checkout-sdk-js/rc/dist/browser/pagseguro.min.js"></script>
+    <script type="text/javascript"
+        src="https://stc.pagseguro.uol.com.br/pagseguro/api/v2/checkout/pagseguro.directpayment.js"></script>
+</head>
+
+<body>
+    <script>
+        PagSeguroDirectPayment.setSessionId('8fbbb6bf93b24555886c8473ed396a99');
+
+        PagSeguroDirectPayment.createCardToken({
+            cardNumber: '4111111111111111', // Número do cartão de crédito
+            brand: 'visa', // Bandeira do cartão
+            cvv: '123', // CVV do cartão
+            expirationMonth: '12', // Mês da expiração do cartão
+            expirationYear: '2030', // Ano da expiração do cartão, é necessário os 4 dígitos.
+            success: function (response) {
+                console.log(response.card.token);
+            },
+            error: function (response) {
+                // Callback para chamadas que falharam.
+                console.log(response);
+            },
+            complete: function (response) {
+                // Callback para todas chamadas.
+                console.log(response);
+            }
+        });
+    </script>
+</body>
+
+</html>

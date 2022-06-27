@@ -12,6 +12,7 @@ class Plan(models.Model):
         null=True,
         blank=True
     )
+    trial_days = models.PositiveSmallIntegerField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     edited_at = models.DateTimeField(auto_now=True)
 
@@ -19,4 +20,6 @@ class Plan(models.Model):
         return self.title
 
     def to_charge(self) -> bool:
-        return self.pagseguro_plan_id is not None
+        trial = self.trial_days is not None
+        pagseguro = self.pagseguro_plan_id is not None
+        return trial and pagseguro

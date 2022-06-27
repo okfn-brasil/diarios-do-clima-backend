@@ -14,6 +14,7 @@ class PlanSubscription(models.Model):
         null=True,
         blank=True
     )
+    trial_end_at = models.DateField(null=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self) -> str:

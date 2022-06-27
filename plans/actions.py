@@ -19,13 +19,19 @@ def get_or_create_default_plan() -> Plan:
     return plan
 
 
-def create_user_default_plan_subscription(user: User) -> None:
-    plan = get_or_create_default_plan()
+def create_user_plan_subscription(user: User, plan: Plan) -> PlanSubscription:
     plan_subscription = PlanSubscription(
         user=user,
         plan=plan,
     )
     plan_subscription.save()
+    return plan_subscription
+
+
+def create_user_default_plan_subscription(user: User) -> None:
+    plan = get_or_create_default_plan()
+    plan_subscription = create_user_plan_subscription(user=user, plan=plan)
+
     plan_subscription_status = PlanSubscriptionStatus(
         plan_subscription=plan_subscription,
         pagseguro_data=PlanSubscriptionStatus.DATA_ACTIVE,

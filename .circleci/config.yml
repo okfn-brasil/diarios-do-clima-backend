@@ -11,6 +11,13 @@ jobs:
           DIARIO_PAGSEGURO_EMAIL: email@gmail.com
           DIARIO_PAGSEGURO_TOKEN: ADD0FRA720C4B6AA4058FD1F36DAG4
           DIARIO_PAGSEGURO_WS_URL: https://ws.sandbox.pagseguro.uol.com.br
+          DIARIO_QUERIDO_DIARIO_API_URL: http://mock:3000
+          CELERY_BROKER_URL: redis://redis:6379          
+          CELERY_RESULT_BACKEND: redis://redis:6379
+          EMAIL_HOST: smtp.gmail.com
+          EMAIL_HOST_USER: ops@jurema.la
+          EMAIL_HOST_PASSWORD: password
+          EMAIL_PORT: 587
 
       - image: cimg/postgres:14.2
         environment:

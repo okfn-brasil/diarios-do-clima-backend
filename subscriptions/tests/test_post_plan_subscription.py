@@ -98,8 +98,9 @@ class APIPostPlanSubscriptionTestCase(APITestCase):
         pag_seguro_id = 'pag_seguro_id'
         plan = Plan(
             title="pro teste",
-            html="<p>teste</p>",            
+            html="<p>teste</p>",
             pagseguro_plan_id=pag_seguro_id,
+            trial_days=7,
         )
         plan.save()
 

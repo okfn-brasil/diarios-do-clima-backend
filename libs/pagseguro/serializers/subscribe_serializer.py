@@ -1,3 +1,4 @@
+from libs.utils.datetime import datetime_to_date_str
 class SubscribeSerializer:
 
     def __init__(self, user, plan_subscription, credit_card, ip: str) -> None:
@@ -53,7 +54,7 @@ class SubscribeSerializer:
                 "token": credit_card.token,
                 "holder": {
                     "name": credit_card.holder_name,
-                    "birthDate": str(credit_card.holder_birth_date.strftime("%d/%m/%Y")),
+                    "birthDate": datetime_to_date_str(date=credit_card.holder_birth_date),
                     "documents": [
                         {
                             "type": "CPF",
