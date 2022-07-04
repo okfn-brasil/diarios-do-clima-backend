@@ -19,7 +19,7 @@ class PagSeguroApi(PagSeguroApiABC):
 
     def get_session(self) -> str:
         url = f"{self.ws_url}/v2/sessions?{self.auth}"
-        response = requests.request("POST", url, headers=self.headers, data={})
+        response = requests.request("POST", url)
         session = ET.fromstring(response.text)
         id = session.find('id')
         return id.text
