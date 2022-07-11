@@ -150,7 +150,7 @@ REST_FRAMEWORK = {
 
 CORS_ALLOWED_ORIGINS = [
     'https://sandbox.pagseguro.uol.com.br',
-    'https://diariodoclima.jurema.la/',
+    'https://diariodoclima.jurema.la',
 ]
 
 CELERY_BROKER_URL = config('CELERY_BROKER_URL')
