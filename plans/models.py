@@ -12,7 +12,7 @@ class Plan(models.Model):
         null=True,
         blank=True
     )
-    trial_days = models.PositiveSmallIntegerField(null=True)
+    trial_days = models.PositiveSmallIntegerField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     edited_at = models.DateTimeField(auto_now=True)
 

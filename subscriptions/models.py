@@ -66,7 +66,7 @@ class PlanSubscriptionStatus(models.Model):
 
     pagseguro_data = models.CharField(max_length=25, choices=DATA_CHOICES)
     pagseguro_notification_code = models.CharField(
-        max_length=36,
+        max_length=40,
         null=True,
         blank=True,
         unique=True,
