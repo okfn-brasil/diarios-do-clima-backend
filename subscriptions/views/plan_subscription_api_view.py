@@ -40,16 +40,11 @@ class PlanSubscriptionApiView(CreateAPIView):
             )
             plan_subscription_cancelled_status.save()
 
-    def new_plan_subscription_create(self, plan_subscription: PlanSubscription) -> None:
+    def create_pagseguro_plan(self, plan_subscription: PlanSubscription) -> None:
 
         plan: Plan = plan_subscription.plan
 
         if not plan.to_charge():
-            plan_subscription_status = PlanSubscriptionStatus(
-                plan_subscription=plan_subscription,
-                pagseguro_data=PlanSubscriptionStatus.DATA_ACTIVE,
-            )
-            plan_subscription_status.save()
             return
 
         subscribe_serializer = SubscribeSerializer(
@@ -77,12 +72,33 @@ class PlanSubscriptionApiView(CreateAPIView):
         trial_end_at = today + time_delta
         plan_subscription.trial_end_at = trial_end_at
 
+    def set_plan_subscription_status(self, plan_subscription: PlanSubscription) -> None:
+        plan: Plan = plan_subscription.plan
+
+        if not plan.to_charge():
+            plan_subscription_status = PlanSubscriptionStatus(
+                plan_subscription=plan_subscription,
+                pagseguro_data=PlanSubscriptionStatus.DATA_ACTIVE,
+            )
+            plan_subscription_status.save()
+        else:
+            has_trial = plan.trial_days > 0
+            data = PlanSubscriptionStatus.DATA_ACTIVE if has_trial else PlanSubscriptionStatus.DATA_PENDING
+            plan_subscription_status = PlanSubscriptionStatus(
+                plan_subscription=plan_subscription,
+                pagseguro_data=data,
+            )
+            plan_subscription_status.save()
+
     def perform_create(self, serializer):
         with transaction.atomic():
             self.previous_plan_subscription_cancel()
             plan_subscription = serializer.save(user=self.request.user)
             self.set_trial_end(plan_subscription=plan_subscription)
-            self.new_plan_subscription_create(
+            self.set_plan_subscription_status(
+                plan_subscription=plan_subscription,
+            )
+            self.create_pagseguro_plan(
                 plan_subscription=plan_subscription,
             )
             plan_subscription.save()
