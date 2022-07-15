@@ -17,3 +17,10 @@ class AlertSerializer(serializers.ModelSerializer):
             'created_at',
             'edited_at',
         )
+        
+        read_only_fields = (
+            'id',
+            'user',
+            'created_at',
+            'edited_at',
+        )
