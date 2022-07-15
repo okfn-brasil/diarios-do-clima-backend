@@ -13,27 +13,14 @@ from .serializers import (
 )
 
 
-class MultiSerializerModelView(object):
-    serializers = {}
 
-    def get_serializer_class(self):
-        action = self.request.method.lower()
-        return self.serializers.get(action, self.serializer_class)
-
-
-class UsersMeView(
-    MultiSerializerModelView,
+class UsersMeView(    
     UpdateAPIView,
     RetrieveUpdateAPIView
 ):
     queryset = User.objects.all()
     serializer_class = UserOutputSerializer
-    permission_classes = [IsAuthenticated]
-    serializers = {
-        'retrieve': UserOutputSerializer,
-        'update': UserInputSerializer,
-        'partial_update': UserInputSerializer,
-    }
+    permission_classes = [IsAuthenticated]    
 
     def get_object(self):
         return self.request.user
