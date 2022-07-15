@@ -9,6 +9,7 @@ class AlertSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'user',
+            'email',
             'query_string',
             'territory_id',
             'sub_themes',
