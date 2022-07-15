@@ -25,8 +25,8 @@ class Phone(models.Model):
 class Address(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     street = models.CharField(max_length=50)
-    number = models.CharField(max_length=3)
-    complement = models.CharField(max_length=50)
+    number = models.CharField(max_length=7)
+    complement = models.CharField(max_length=50, null=True, blank=True)
     district = models.CharField(max_length=50)
     city = models.CharField(max_length=255)
     state = models.CharField(max_length=2)
