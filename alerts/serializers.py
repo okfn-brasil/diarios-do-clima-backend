@@ -9,10 +9,18 @@ class AlertSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'user',
+            'email',
             'query_string',
             'territory_id',
             'sub_themes',
             'gov_entities',
+            'created_at',
+            'edited_at',
+        )
+        
+        read_only_fields = (
+            'id',
+            'user',
             'created_at',
             'edited_at',
         )

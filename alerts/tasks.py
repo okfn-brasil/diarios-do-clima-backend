@@ -21,13 +21,17 @@ class SingleAlertTask():
         self.alert_id = alert_id
         self.alert: Alert = Alert.objects.get(id=self.alert_id)
 
-    def __call__(self, *args, **kwargs):        
+    def __call__(self, *args, **kwargs):
         try:
             self.verify_permissions()
             self.get_gazettes()
             self.send_email_alert()
         except OnlyProPlanAllowed:
             self.send_email_call_to_pro()
+
+    def get_email(self):
+        alert_has_email = self.alert.email is not None
+        return self.alert.email if alert_has_email else self.alert.user.email
 
     def verify_permissions(self):
         user: User = self.alert.user
@@ -69,7 +73,7 @@ class SingleAlertTask():
             subject='Diario do Clima - Alerta',
             message=message,
             email_to=[
-                self.alert.user.email,
+                self.get_email(),                
             ]
         )
 
@@ -83,7 +87,7 @@ class SingleAlertTask():
             subject='Diario do Clima - Alerta PRO',
             message='Sua conta não é PRO mas tem alertas ativos, porque não mudar para o plano PRO?',
             email_to=[
-                self.alert.user.email,
+                self.get_email(),
             ]
         )
 
