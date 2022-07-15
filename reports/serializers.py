@@ -11,6 +11,7 @@ class ReportSerializer(serializers.ModelSerializer):
         fields = (
             'id',
             'title',
+            'description',
             'file',
             'is_public',
             'created_at',
