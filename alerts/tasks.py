@@ -30,8 +30,10 @@ class SingleAlertTask():
             self.send_email_call_to_pro()
 
     def get_email(self):
-        alert_has_email = self.alert.email is not None
-        return self.alert.email if alert_has_email else self.alert.user.email
+        alert_email = self.alert.user.alert_email
+        user_email = self.alert.user.email
+        has_alert_email = alert_email is not None
+        return alert_email if has_alert_email else user_email
 
     def verify_permissions(self):
         user: User = self.alert.user
@@ -73,7 +75,7 @@ class SingleAlertTask():
             subject='Diario do Clima - Alerta',
             message=message,
             email_to=[
-                self.get_email(),                
+                self.get_email(),
             ]
         )
 
