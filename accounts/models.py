@@ -49,6 +49,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     id = models.UUIDField(default=uuid.uuid4, primary_key=True)
     email = models.EmailField(unique=True)
+    alert_email = models.EmailField(null=True, blank=True)
     full_name = models.CharField(max_length=60)
     city = models.CharField(max_length=50)
     state = models.CharField(max_length=2)

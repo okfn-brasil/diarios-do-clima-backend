@@ -51,6 +51,7 @@ class APIUserMeUpdateTestCase(APITestCase):
         }
         data['full_name'] = 'Teste Name'
         data['state'] = 'TO'
+        data['alert_email'] = 'alert_change@gmail.com'
 
         response = self.client.put(reverse('users_me'), data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)

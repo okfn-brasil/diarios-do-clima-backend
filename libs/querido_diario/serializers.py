@@ -12,12 +12,12 @@ class Gazette(JSONSerializeble):
     url: str
     territory_name: str
     state_code: str
-    text: str
-    theme: str
+    excerpt: str
     subthemes: List[str]
-    edition: str
+    entities: List[str]
     is_extra_edition: bool
-    file_raw_txt: str
+    txt_url: str
+    edition: Optional[str] = None
 
     def json(self):
         return {
@@ -26,12 +26,12 @@ class Gazette(JSONSerializeble):
             "url": self.url,
             "territory_name": self.territory_name,
             "state_code": self.state_code,
-            "text": self.text,
-            "theme": self.theme,
-            "subthemes": self.subthemes,
+            "excerpt": self.excerpt,
             "edition": self.edition,
+            "subthemes": self.subthemes,
+            "entities": self.entities,
             "is_extra_edition": self.is_extra_edition,
-            "file_raw_txt": self.file_raw_txt,
+            "txt_url": self.txt_url,
         }
 
 
@@ -42,15 +42,15 @@ class GazettesResult(JSONSerializeble):
 
     def json(self):
         return {
-            "total_gazettes": self.total_gazettes,
-            "gazettes": [gazette.json() for gazette in self.gazettes],
+            "total_excerpts": self.total_gazettes,
+            "excerpts": [gazette.json() for gazette in self.gazettes],
         }
 
     @classmethod
     def from_json(cls, data: dict):
         return GazettesResult(
-            total_gazettes=data['total_gazettes'],
-            gazettes=[Gazette(**gazette) for gazette in data['gazettes']],
+            total_gazettes=data['total_excerpts'],
+            gazettes=[Gazette(**gazette) for gazette in data['excerpts']],
         )
 
 
@@ -72,3 +72,17 @@ class GazetteFilters():
     size: Optional[int]
     pre_tags: Optional[str]
     post_tags: Optional[str]
+
+    def json(self):
+        return {
+            "entities": self.entities,
+            "subtheme": self.subtheme,
+            "territory_id": self.territory_id,
+            "since": self.since,
+            "until": self.until,
+            "querystring": self.querystring,
+            "offset": self.offset,
+            "size": self.size,
+            "pre_tags": self.pre_tags,
+            "post_tags": self.post_tags,
+        }
