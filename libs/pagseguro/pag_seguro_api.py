@@ -2,7 +2,7 @@ import xml.etree.ElementTree as ET
 import requests
 from .pag_seguro_api_abc import PagSeguroApiABC, PreApprovalNotification
 from .serializers import SubscribeSerializer, CreditCardChangeData
-from .exceptions import PreApprovalsValidationException
+from .exceptions import PreApprovalsValidationException, GenericSessionError
 
 
 class PagSeguroApi(PagSeguroApiABC):
@@ -22,7 +22,7 @@ class PagSeguroApi(PagSeguroApiABC):
         response = requests.request("POST", url)
         
         if response.status_code != 200:
-            raise GenericSessionError("Erro ao gerar sessão") #TODO: change exception to custom type 
+            raise GenericSessionError("erro generating session")
         
         session = ET.fromstring(response.text)
         id = session.find('id')
