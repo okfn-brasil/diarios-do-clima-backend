@@ -18,6 +18,7 @@ class UserInputSerializer(serializers.ModelSerializer):
         model = User
         fields = [
             "email",
+            "alert_email",
             "full_name",
             "city",
             "state",
@@ -93,6 +94,7 @@ class UserCreateInputSerializer(serializers.ModelSerializer, UserPlanSubscriptio
         fields = [
             "id",
             "email",
+            "alert_email",
             "password",
             "full_name",
             "city",
@@ -130,6 +132,7 @@ class UserOutputSerializer(UserPlanSubscriptionSerializerMixin, serializers.Mode
         fields = [
             "id",
             "email",
+            "alert_email",
             "full_name",
             "city",
             "state",

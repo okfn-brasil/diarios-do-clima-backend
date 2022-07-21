@@ -12,6 +12,7 @@ class APIUserCreateTestCase(APITestCase):
         cls.client = APIClient()
         cls.data = {
             'email': 'email@jurema.la',
+            'alert_email':'alert@email.com',
             'password': 'password',
             'city': 'Cidade',
             'full_name': 'Nome Completo',

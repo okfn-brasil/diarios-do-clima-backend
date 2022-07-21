@@ -34,8 +34,8 @@ class QueridoDiario(QueridoDiarioABC):
     def gazettes(self, filters: GazetteFilters) -> GazettesResult:
         """get cnpj partners list"""
 
-        url = f"{self.api_url}/gazettes/by_theme/ambiental"
-        response = requests.get(url)
+        url = f"{self.api_url}/api/gazettes/by_theme/Políticas%20Ambientais%20Nacionais"
+        response = requests.get(url, params=filters.json())
 
         if response.status_code == 404:
             raise NotFound("CNPJ não encontrado!")
