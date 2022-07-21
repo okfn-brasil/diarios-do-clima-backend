@@ -15,8 +15,8 @@ class Gazette(JSONSerializeble):
     excerpt: str
     subthemes: List[str]
     entities: List[str]
-    is_extra_edition: bool
     txt_url: str
+    is_extra_edition: Optional[bool] = None
     edition: Optional[str] = None
 
     def json(self):
