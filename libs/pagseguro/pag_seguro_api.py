@@ -20,6 +20,10 @@ class PagSeguroApi(PagSeguroApiABC):
     def get_session(self) -> str:
         url = f"{self.ws_url}/v2/sessions?{self.auth}"
         response = requests.request("POST", url)
+        
+        if response.status_code != 200:
+            raise GenericSessionError("Erro ao gerar sessão") #TODO: change exception to custom type 
+        
         session = ET.fromstring(response.text)
         id = session.find('id')
         return id.text
