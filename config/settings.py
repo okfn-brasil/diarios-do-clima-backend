@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
+import logging
 from libs.pagseguro import PagSeguroApiABC, PagSeguroApi
 from libs.querido_diario import QueridoDiarioABC, QueridoDiario
 from pathlib import Path
@@ -193,3 +194,6 @@ EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
 EMAIL_PORT = config('EMAIL_PORT')
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = 'default from email'
+
+
+logging.basicConfig(level=logging.DEBUG)

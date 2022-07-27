@@ -15,8 +15,8 @@ class Gazette(JSONSerializeble):
     excerpt: str
     subthemes: List[str]
     entities: List[str]
-    is_extra_edition: bool
     txt_url: str
+    is_extra_edition: Optional[bool] = None
     edition: Optional[str] = None
 
     def json(self):
@@ -68,10 +68,11 @@ class GazetteFilters():
     since: Optional[str]
     until: Optional[str]
     querystring: Optional[str]
-    offset: Optional[int]
-    size: Optional[int]
-    pre_tags: Optional[str]
-    post_tags: Optional[str]
+    offset: Optional[int] = None
+    size: Optional[int] = None
+    pre_tags: Optional[str] = None
+    post_tags: Optional[str] = None
+    sort_by: Optional[str] = None
 
     def json(self):
         return {
@@ -85,4 +86,5 @@ class GazetteFilters():
             "size": self.size,
             "pre_tags": self.pre_tags,
             "post_tags": self.post_tags,
+            "sort_by": self.sort_by,
         }

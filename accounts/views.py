@@ -10,17 +10,17 @@ from .serializers import (
     UserOutputSerializer,
     UserInputSerializer,
     UserCreateInputSerializer,
+    PasswordChangeSerializer,
 )
 
 
-
-class UsersMeView(    
+class UsersMeView(
     UpdateAPIView,
     RetrieveUpdateAPIView
 ):
     queryset = User.objects.all()
     serializer_class = UserOutputSerializer
-    permission_classes = [IsAuthenticated]    
+    permission_classes = [IsAuthenticated]
 
     def get_object(self):
         return self.request.user
@@ -33,6 +33,7 @@ class UsersView(CreateAPIView):
 
 class UsersEmailVerify(APIView):
     authentication_classes = []
+
     def get(self, request, *args, **kwargs):
         email = kwargs.get('email', None)
         if email is None:
@@ -42,6 +43,17 @@ class UsersEmailVerify(APIView):
 
         try:
             User.objects.get(email=email)
-            return Response( status=status.HTTP_200_OK)
+            return Response(status=status.HTTP_200_OK)
         except User.DoesNotExist:
             raise NotFound()
+
+
+class UserPasswordChangeView(UpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = PasswordChangeSerializer
+
+    def update(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        return Response(status=status.HTTP_200_OK)

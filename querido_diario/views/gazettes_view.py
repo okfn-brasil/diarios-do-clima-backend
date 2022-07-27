@@ -55,6 +55,7 @@ class GazettesView(APIView):
             'size': self.request.GET.get('size', None),
             'pre_tags': self.request.GET.get('pre_tags', None),
             'post_tags': self.request.GET.get('post_tags', None),
+            'sort_by': self.request.GET.get('sort_by', None),
         }
 
     def pro_subtheme_validation(self):

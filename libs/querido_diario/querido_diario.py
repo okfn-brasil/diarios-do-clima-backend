@@ -2,7 +2,7 @@ from typing import List
 import requests
 from .querido_diario_abc import QueridoDiarioABC
 from .serializers import GazetteFilters, GazettesResult
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import NotFound, APIException
 
 
 class QueridoDiario(QueridoDiarioABC):
@@ -38,7 +38,47 @@ class QueridoDiario(QueridoDiarioABC):
         response = requests.get(url, params=filters.json())
 
         if response.status_code == 404:
-            raise NotFound("CNPJ não encontrado!")
+            raise NotFound("Gazettes não encontradas!")
 
         data: dict = response.json()
         return GazettesResult.from_json(data)
+
+    def entities(self) -> List[str]:
+        url = f"{self.api_url}/api/gazettes/by_theme/entities/Pol%C3%ADticas%20Ambientais%20Nacionais"
+        response = requests.get(url)
+
+        if response.status_code == 404:
+            raise NotFound("Entidades não encontradas!")
+
+        data: dict = response.json()
+
+        entities: List[dict] = data.get("entities", None)
+
+        if entities is None:
+            raise APIException("resposta mal formatada [entities]!")
+
+        if len(entities) != 1:
+            raise APIException("resposta mal formatada [entities.length]!")
+
+        entity_map = entities[0]
+
+        entities_string_list = entity_map.get("entities", [])
+
+        return entities_string_list
+    
+
+    def subthemes(self) -> List[str]:
+        url = f"{self.api_url}/api/gazettes/by_theme/subthemes/Políticas%20Ambientais%20Nacionais"
+        response = requests.get(url)
+
+        if response.status_code == 404:
+            raise NotFound("Entidades não encontradas!")
+
+        data: dict = response.json()
+
+        subthemes: List[str] = data.get("subthemes", None)
+
+        if subthemes is None:
+            raise APIException("resposta mal formatada [subthemes]!")
+
+        return subthemes

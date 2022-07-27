@@ -2,8 +2,9 @@ import xml.etree.ElementTree as ET
 import requests
 from .pag_seguro_api_abc import PagSeguroApiABC, PreApprovalNotification
 from .serializers import SubscribeSerializer, CreditCardChangeData
-from .exceptions import PreApprovalsValidationException
+from .exceptions import PreApprovalsValidationException, GenericSessionError
 
+from requests.adapters import HTTPAdapter, Retry
 
 class PagSeguroApi(PagSeguroApiABC):
     headers = {
@@ -17,9 +18,18 @@ class PagSeguroApi(PagSeguroApiABC):
         self.ws_url = ws_url
         self.auth = f"email={self.email}&token={self.token}"
 
-    def get_session(self) -> str:
+    def get_session(self) -> str:     
+        request_session = requests.Session()
+        retries = Retry(total=5, backoff_factor=1, status_forcelist=[ 502, 503, 504 ])
+        request_session.mount('http://', HTTPAdapter(max_retries=retries))
+        request_session.mount('https://', HTTPAdapter(max_retries=retries))        
+
         url = f"{self.ws_url}/v2/sessions?{self.auth}"
-        response = requests.request("POST", url)
+        response = request_session.post(url)
+        
+        if response.status_code != 200:
+            raise GenericSessionError("erro generating session")
+        
         session = ET.fromstring(response.text)
         id = session.find('id')
         return id.text
