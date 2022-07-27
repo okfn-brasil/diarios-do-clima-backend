@@ -72,6 +72,7 @@ class GazetteFilters():
     size: Optional[int]
     pre_tags: Optional[str]
     post_tags: Optional[str]
+    sort_by: Optional[str]
 
     def json(self):
         return {
@@ -85,4 +86,5 @@ class GazetteFilters():
             "size": self.size,
             "pre_tags": self.pre_tags,
             "post_tags": self.post_tags,
+            "sort_by": self.sort_by,
         }
