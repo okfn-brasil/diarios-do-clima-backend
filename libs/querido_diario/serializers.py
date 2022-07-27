@@ -68,11 +68,11 @@ class GazetteFilters():
     since: Optional[str]
     until: Optional[str]
     querystring: Optional[str]
-    offset: Optional[int]
-    size: Optional[int]
-    pre_tags: Optional[str]
-    post_tags: Optional[str]
-    sort_by: Optional[str]
+    offset: Optional[int] = None
+    size: Optional[int] = None
+    pre_tags: Optional[str] = None
+    post_tags: Optional[str] = None
+    sort_by: Optional[str] = None
 
     def json(self):
         return {
