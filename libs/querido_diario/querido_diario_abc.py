@@ -16,3 +16,11 @@ class QueridoDiarioABC(abc.ABC):
     @abc.abstractmethod
     def gazettes(self, filters: GazetteFilters) -> GazettesResult:
         """get cnpj partners list"""
+
+    @abc.abstractmethod
+    def entities(self) -> List[str]:
+        """get entities"""
+    
+    @abc.abstractmethod
+    def subthemes(self) -> List[str]:
+        """get subthemes"""
