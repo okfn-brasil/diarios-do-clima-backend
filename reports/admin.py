@@ -1,6 +1,6 @@
 from atexit import register
 from django.contrib import admin
-from .models import Report, ReportUserAccess
+from .models import Report, ReportUserAccess, Quotation
 
 
 class ReportUserAccessInline(admin.StackedInline):
@@ -22,4 +22,24 @@ class ReportAdmin(admin.ModelAdmin):
 
     inlines = (
         ReportUserAccessInline,
+    )
+
+
+@admin.register(Quotation)
+class QuotationAdmin(admin.ModelAdmin):
+    list_display = (
+        'id',
+        'name',
+        'email',
+        'created_at',
+    )
+
+    search_fields = (
+        'id',
+        'email',
+        'name',
+    )
+
+    list_filter = (
+        'created_at',
     )
