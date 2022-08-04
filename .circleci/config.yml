@@ -18,6 +18,8 @@ jobs:
           EMAIL_HOST_USER: ops@jurema.la
           EMAIL_HOST_PASSWORD: password
           EMAIL_PORT: 587
+          DEFAULT_FROM_EMAIL: ops@jurema.la          
+          QUOTATION_TO_EMAIL: ops@jurema.la
 
       - image: cimg/postgres:14.2
         environment:
