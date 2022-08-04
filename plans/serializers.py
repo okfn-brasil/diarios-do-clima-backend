@@ -8,6 +8,7 @@ class PlanSerializer(serializers.ModelSerializer):
         fields = (
             "id",
             "title",
+            "price",
             "html",            
             "pagseguro_plan_id",
             "created_at",
