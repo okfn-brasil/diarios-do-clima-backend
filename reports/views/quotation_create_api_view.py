@@ -21,8 +21,9 @@ class QuotationCreateApiView(CreateAPIView):
             message += f"{quotation.message}\n"
             
             try:
+                subject = f"Cotação de relatório de {quotation.name}"
                 send_email(email=Email(
-                    subject=f"Quotation {quotation.id}",
+                    subject=subject,
                     email_to=[settings.QUOTATION_TO_EMAIL],
                     message=message,
                 ))
