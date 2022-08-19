@@ -43,9 +43,12 @@ class SingleAlertTask():
             raise OnlyProPlanAllowed()
 
     def get_gazettes(self) -> int:
+        now = timezone.now()
+        first_hour = timezone.datetime(now.year, now.month, now.day, hour=0, minute=0, second=0)
+        last_hour = timezone.datetime(now.year, now.month, now.day, hour=23, minute=59, second=59)
         querido_diario: QueridoDiarioABC = services.get(QueridoDiarioABC)
-        self.since: timezone.datetime = timezone.now()
-        self.until: timezone.datetime = timezone.now()
+        self.since = first_hour
+        self.until =  last_hour
         filters = GazetteFilters(
             querystring=self.alert.query_string,
             territory_id=self.alert.territory_id,
