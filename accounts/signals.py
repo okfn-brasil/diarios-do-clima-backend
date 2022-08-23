@@ -28,15 +28,18 @@ def init_signals(app: AppConfig):
 @receiver(reset_password_token_created)
 def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
 
-    uri = reverse('password_reset:reset-password-confirm')
+    uri = "/redefinir-senha"
     key = reset_password_token.key
-    reset_password_url = "{}?token={}".format(
-        instance.request.build_absolute_uri(uri), key,
-    )
+    absolute = instance.request.build_absolute_uri(uri)
+    reset_password_url = f"{absolute}?token={key}"
+
+    message = "Olá, \n"
+    message += "Você pediu para redefinir sua senha, para fazê-lo basta clicar no link abaixo: \n"
+    message += reset_password_url + " \n\n"
+    message += "Caso não tenha sido você que selecionou essa opção, por favor ignore este email.\n"
 
     send_email(Email(
-        subject="Password Reset for {title}".format(title="Diario do Clima"),
+        subject="Redefinir senha para Diário do clima.",
         email_to=[reset_password_token.user.email],
-        message=reset_password_url,
+        message=message,
     ))
-
