@@ -5,8 +5,7 @@ from ..serializers import ReportSerializer
 
 
 class ReportsPublicApiView(ListAPIView):
-    permission_classes = [
-        IsAuthenticated,
-    ]
+    permission_classes = []
+    authentication_classes = []
     serializer_class = ReportSerializer
     queryset = Report.objects.filter(is_public=True)
