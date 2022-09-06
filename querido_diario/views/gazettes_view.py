@@ -43,13 +43,20 @@ class GazettesView(APIView):
     def setup_query_data(self):
         entities = self.request.GET.getlist('entities', [])
         self.subthemes = self.request.GET.getlist('subtheme', [])
-        self.since = self.request.GET.get('since', None)
+
+        self.scraped_since = self.request.GET.get("scraped_since", None)
+        self.scraped_until = self.request.GET.get("scraped_until", None)
+        self.published_since = self.request.GET.get("published_since", None)
+        self.published_until = self.request.GET.get("published_until", None)
+
         self.filters_data = {
             'entities': entities,
             'subtheme': self.subthemes,
             'territory_id': self.request.GET.get('territory_id', None),
-            'since': self.since,
-            'until': self.request.GET.get('until', None),
+            'scraped_since': self.scraped_since,
+            'scraped_until': self.scraped_until,
+            'published_since': self.published_since,
+            'published_until': self.published_until,
             'querystring': self.request.GET.get('querystring', None),
             'offset': self.request.GET.get('offset', None),
             'size': self.request.GET.get('size', None),
@@ -65,9 +72,11 @@ class GazettesView(APIView):
                 {'subtheme': 'sub temas somente disponiveis para plano pro'})
 
     def pro_since_validation(self):
-        if self.since is not None:
+        if self.published_since is not None:
             today: timezone.datetime = timezone.now()
-            since_date = datetime_from_date_str_diario(date=self.since)
+            since_date = datetime_from_date_str_diario(
+                date=self.published_since,
+            )
             since_date = timezone.make_aware(since_date)
 
             date_diff: timezone.timedelta = today - since_date
@@ -75,7 +84,8 @@ class GazettesView(APIView):
 
             if since_older_then_3_months and not self.plan.to_charge():
                 raise ValidationError(
-                    {'since': 'data somente disponivel para plano pro'})
+                    {'published_since': 'data somente disponivel para plano pro'},
+                )
 
     def get_gazettes(self) -> GazettesResult:
         querido_diario: QueridoDiarioABC = services.get(QueridoDiarioABC)

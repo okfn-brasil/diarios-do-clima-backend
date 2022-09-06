@@ -96,18 +96,18 @@ class APIGazettesTestCase(APITestCase):
         diff: timezone.datetime = today - delta
         date_str = datetime_to_date_str_diario(date=diff)
         response = self.client.get(
-            reverse('gazettes') + f'?since={date_str}',
+            reverse('gazettes') + f'?published_since={date_str}',
         )
         self.assertEquals(response.status_code, status.HTTP_200_OK)
 
     def test_gazettes_get_pro_since_query_with_non_pro_user(self):
         self.login()
         response = self.client.get(
-            reverse('gazettes') + '?since=2015-01-01',
+            reverse('gazettes') + '?published_since=2015-01-01',
         )
         self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
         data = response.json()
-        since = data.get('since', None)
+        since = data.get('published_since', None)
         self.assertEquals(since, 'data somente disponivel para plano pro')
 
     def test_gazettes_get_pro_subtheme_query_with_non_pro_user(self):
@@ -126,6 +126,6 @@ class APIGazettesTestCase(APITestCase):
         self.setup_user_pro_plan()
         response = self.client.get(
             reverse('gazettes') +
-            '?since=2015-01-01&subtheme=sub1&subtheme=sub2',
+            '?published_since=2015-01-01&subtheme=sub1&subtheme=sub2',
         )
         self.assertEquals(response.status_code, status.HTTP_200_OK)

@@ -18,6 +18,7 @@ class Gazette(JSONSerializeble):
     txt_url: str
     is_extra_edition: Optional[bool] = None
     edition: Optional[str] = None
+    scraped_at: Optional[str] = None
 
     def json(self):
         return {
@@ -32,6 +33,7 @@ class Gazette(JSONSerializeble):
             "entities": self.entities,
             "is_extra_edition": self.is_extra_edition,
             "txt_url": self.txt_url,
+            "scraped_at": self.scraped_at,
         }
 
 
@@ -65,9 +67,11 @@ class GazetteFilters():
     entities: Optional[List[str]]
     subtheme: Optional[List[str]]
     territory_id: Optional[str]
-    since: Optional[str]
-    until: Optional[str]
-    querystring: Optional[str]
+    scraped_since: Optional[str] = None
+    scraped_until: Optional[str] = None
+    published_since: Optional[str] = None
+    published_until: Optional[str] = None
+    querystring: Optional[str] = None
     offset: Optional[int] = None
     size: Optional[int] = None
     pre_tags: Optional[str] = None
@@ -79,8 +83,10 @@ class GazetteFilters():
             "entities": self.entities,
             "subtheme": self.subtheme,
             "territory_id": self.territory_id,
-            "since": self.since,
-            "until": self.until,
+            "scraped_since": self.scraped_since,
+            "scraped_until": self.scraped_until,
+            "published_since": self.published_since,
+            "published_until": self.published_until,
             "querystring": self.querystring,
             "offset": self.offset,
             "size": self.size,

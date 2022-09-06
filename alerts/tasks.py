@@ -47,15 +47,15 @@ class SingleAlertTask():
         first_hour = timezone.datetime(now.year, now.month, now.day, hour=0, minute=0, second=0)
         last_hour = timezone.datetime(now.year, now.month, now.day, hour=23, minute=59, second=59)
         querido_diario: QueridoDiarioABC = services.get(QueridoDiarioABC)
-        self.since = first_hour
-        self.until =  last_hour
+        self.published_since = first_hour
+        self.published_until =  last_hour
         filters = GazetteFilters(
             querystring=self.alert.query_string,
             territory_id=self.alert.territory_id,
             entities=self.alert.gov_entities,
             subtheme=self.alert.sub_themes,
-            since=datetime_to_date_str_diario(date=self.since),
-            until=datetime_to_date_str_diario(date=self.until),
+            published_since=datetime_to_date_str_diario(date=self.published_since),
+            published_until=datetime_to_date_str_diario(date=self.published_until),
             offset=None,
             size=None,
             pre_tags=None,
@@ -71,8 +71,8 @@ class SingleAlertTask():
         message += "cidade: " + str(self.alert.territory_id) + "\n"
         message += "entidades: " + str(self.alert.gov_entities) + "\n"
         message += "sub temas: " + str(self.alert.sub_themes) + "\n"
-        message += datetime_to_date_str_diario(date=self.since) + "\n"
-        message += datetime_to_date_str_diario(date=self.until) + "\n"
+        message += datetime_to_date_str_diario(date=self.published_since) + "\n"
+        message += datetime_to_date_str_diario(date=self.published_until) + "\n"
 
         return Email(
             subject='Diario do Clima - Alerta',
