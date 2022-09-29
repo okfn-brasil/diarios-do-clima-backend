@@ -8,7 +8,6 @@ from accounts.models import User
 from plans.models import Plan
 from subscriptions.selectors import user_get_latest_plan_subscription
 from libs.utils.datetime import datetime_to_date_str_diario
-from typing import List
 from libs.utils.email import Email, send_email
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
@@ -66,11 +65,7 @@ class SingleAlertTask():
             pre_tags=None,
             post_tags=None,
         )
-            offset=None,
-            size=None,
-            pre_tags=None,
-            post_tags=None,
-        )
+
         self.results: GazettesResult = querido_diario.gazettes(filters=filters)
 
     def email_get_alert(self) -> Email:
