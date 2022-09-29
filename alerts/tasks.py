@@ -8,8 +8,9 @@ from accounts.models import User
 from plans.models import Plan
 from subscriptions.selectors import user_get_latest_plan_subscription
 from libs.utils.datetime import datetime_to_date_str_diario
-from typing import List
 from libs.utils.email import Email, send_email
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
 
 
 class OnlyProPlanAllowed(Exception):
@@ -44,39 +45,49 @@ class SingleAlertTask():
 
     def get_gazettes(self) -> int:
         now = timezone.now()
-        first_hour = timezone.datetime(now.year, now.month, now.day, hour=0, minute=0, second=0)
-        last_hour = timezone.datetime(now.year, now.month, now.day, hour=23, minute=59, second=59)
+        first_hour = timezone.datetime(
+            now.year, now.month, now.day, hour=0, minute=0, second=0)
+        last_hour = timezone.datetime(
+            now.year, now.month, now.day, hour=23, minute=59, second=59)
         querido_diario: QueridoDiarioABC = services.get(QueridoDiarioABC)
-        self.published_since = first_hour
-        self.published_until =  last_hour
+        self.published_since = datetime_to_date_str_diario(date=first_hour)
+        self.published_until = datetime_to_date_str_diario(date=last_hour)
+
         filters = GazetteFilters(
             querystring=self.alert.query_string,
             territory_id=self.alert.territory_id,
             entities=self.alert.gov_entities,
             subtheme=self.alert.sub_themes,
-            published_since=datetime_to_date_str_diario(date=self.published_since),
-            published_until=datetime_to_date_str_diario(date=self.published_until),
+            published_since=self.published_since,
+            published_until=self.published_until,
             offset=None,
             size=None,
             pre_tags=None,
             post_tags=None,
         )
+
         self.results: GazettesResult = querido_diario.gazettes(filters=filters)
 
     def email_get_alert(self) -> Email:
-        message = ""
-        message += str(self.results.total_gazettes)
-        message += "Novos resultados de pesquisa encontrados...\n\n"
-        message += "pesquisa: " + str(self.alert.query_string) + "\n"
-        message += "cidade: " + str(self.alert.territory_id) + "\n"
-        message += "entidades: " + str(self.alert.gov_entities) + "\n"
-        message += "sub temas: " + str(self.alert.sub_themes) + "\n"
-        message += datetime_to_date_str_diario(date=self.published_since) + "\n"
-        message += datetime_to_date_str_diario(date=self.published_until) + "\n"
+
+        context = {
+            'total_gazettes': self.results.total_gazettes,
+            'query_string': self.alert.query_string,
+            'territory_id': self.alert.territory_id,
+            'gov_entities': self.alert.gov_entities,
+            'sub_themes': self.alert.sub_themes,
+            'published_since': self.published_since,
+            'published_until': self.published_until,
+        }
+        subject = 'Diario do Clima - Alerta'
+
+        html_message = render_to_string('alerts/email.html', context)
+        plain_message = strip_tags(html_message)
 
         return Email(
-            subject='Diario do Clima - Alerta',
-            message=message,
+            subject=subject,
+            message=plain_message,
+            message_html=html_message,
             email_to=[
                 self.get_email(),
             ]

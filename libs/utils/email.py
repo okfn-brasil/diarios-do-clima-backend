@@ -1,6 +1,6 @@
 from django.conf import settings
 from dataclasses import dataclass
-from typing import List
+from typing import List, Optional
 from django.core.mail import send_mail
 
 
@@ -9,6 +9,7 @@ class Email:
     subject: str
     message: str
     email_to: List[str]
+    message_html:Optional[str] = None
 
 
 def send_email(email: Email):
@@ -18,4 +19,5 @@ def send_email(email: Email):
         settings.EMAIL_HOST_USER,
         email.email_to,
         fail_silently=False,
+        html_message=email.message_html,
     )
