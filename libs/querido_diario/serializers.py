@@ -64,9 +64,9 @@ class SortByEnum(Enum):
 
 @dataclass
 class GazetteFilters():
-    entities: Optional[List[str]]
-    subtheme: Optional[List[str]]
-    territory_id: Optional[str]
+    entities: Optional[List[str]] = None
+    subtheme: Optional[List[str]] = None
+    territory_id: Optional[str] = None
     scraped_since: Optional[str] = None
     scraped_until: Optional[str] = None
     published_since: Optional[str] = None
