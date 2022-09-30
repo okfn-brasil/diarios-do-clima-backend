@@ -61,10 +61,6 @@ class SingleAlertTask():
             subtheme=self.alert.sub_themes,
             published_since=self.published_since,
             published_until=self.published_until,
-            offset=None,
-            size=None,
-            pre_tags=None,
-            post_tags=None,
         )
 
         self.results: GazettesResult = querido_diario.gazettes(filters=filters)
