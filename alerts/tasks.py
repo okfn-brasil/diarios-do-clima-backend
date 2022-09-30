@@ -1,3 +1,4 @@
+from libs.ibge.city_abc import CityABC
 from django.utils import timezone
 from .models import Alert
 from libs.services import services
@@ -69,11 +70,13 @@ class SingleAlertTask():
         self.results: GazettesResult = querido_diario.gazettes(filters=filters)
 
     def email_get_alert(self) -> Email:
+        city_api: CityABC = services.get(CityABC)
+        territory_name = city_api.get_name(self.alert.territory_id)
 
         context = {
             'total_gazettes': self.results.total_gazettes,
             'query_string': self.alert.query_string,
-            'territory_id': self.alert.territory_id,
+            'territory_id': territory_name,
             'gov_entities': self.alert.gov_entities,
             'sub_themes': self.alert.sub_themes,
             'published_since': self.published_since,
