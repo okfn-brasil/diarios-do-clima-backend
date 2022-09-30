@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 import logging
+from libs.ibge import CityABC, City
 from libs.pagseguro import PagSeguroApiABC, PagSeguroApi
 from libs.querido_diario import QueridoDiarioABC, QueridoDiario
 from pathlib import Path
@@ -183,6 +184,8 @@ DIARIO_QUERIDO_DIARIO_API_URL = config('DIARIO_QUERIDO_DIARIO_API_URL')
 services.register(QueridoDiarioABC, QueridoDiario(
     api_url=DIARIO_QUERIDO_DIARIO_API_URL,
 ))
+
+services.register(CityABC, City())
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
