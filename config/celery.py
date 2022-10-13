@@ -20,13 +20,13 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 app.conf.beat_schedule = {
     'run-every-day-at-01am-alerts': {
         'task': 'alerts.tasks.daily_setup_task',
-        'schedule': crontab(hour=1),
-        #'schedule': 10.0,
+        'schedule': crontab(hour=1, minute=0),
+        # 'schedule': 10.0,
     },
     'run-every-day-at-01am-trial-end': {
         'task': 'subscriptions.tasks.daily_setup_trial_end_task',
-        'schedule': crontab(hour=1),
-        #'schedule': 10.0,
+        'schedule': crontab(hour=1, minute=0),
+        # 'schedule': 10.0,
     },
 }
 
