@@ -14,7 +14,7 @@ class SingleTrialEndTask:
 
     def __call__(self) -> None:
         email = Email(
-            email_to=[self.user.email],            
+            email_to=[self.user.email],
             subject=f"{settings.PROJECT_TITLE} final do periodo de teste",
             message="Seu trial terminam em dois(2) dias.",
         )
