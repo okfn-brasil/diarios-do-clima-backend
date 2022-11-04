@@ -20,6 +20,11 @@ jobs:
           EMAIL_PORT: 587
           DEFAULT_FROM_EMAIL: ops@jurema.la          
           QUOTATION_TO_EMAIL: ops@jurema.la
+          FRONT_BASE_URL: https://localhost
+          PROJECT_TITLE: Diario do Clima
+          ALERT_HOUR: 1
+          ALERT_MINUTE: 0
+          ALERT_EMAIL_SUBJECT: Diario do Clima, novo documento encontrado
 
       - image: cimg/postgres:14.2
         environment:

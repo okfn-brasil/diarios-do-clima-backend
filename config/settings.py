@@ -33,6 +33,7 @@ DEBUG = config('DIARIO_DEBUG', cast=bool, default=False)
 
 
 ALLOWED_HOSTS = config('DIARIO_ALLOWED_HOSTS', cast=Csv())
+FRONT_BASE_URL = config('FRONT_BASE_URL')
 
 
 # Application definition
@@ -154,6 +155,7 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [
     'https://sandbox.pagseguro.uol.com.br',
     'https://diariodoclima.jurema.la',
+    'https://queridodiario.jurema.la',
 ]
 
 USE_X_FORWARDED_HOST = True
@@ -202,6 +204,11 @@ EMAIL_PORT = config('EMAIL_PORT')
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
 QUOTATION_TO_EMAIL = config('QUOTATION_TO_EMAIL')
+
+
+PROJECT_TITLE = config('PROJECT_TITLE')
+ALERT_HOUR = config('ALERT_HOUR', cast=int, default=1)
+ALERT_MINUTE = config('ALERT_MINUTE', cast=int, default=0)
 
 
 logging.basicConfig(level=logging.DEBUG)
