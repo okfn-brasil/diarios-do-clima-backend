@@ -7,7 +7,7 @@ class AlertAdmin(admin.ModelAdmin):
     list_display = (
         'id',
         'user',
-        'territory_id',
+        'territories',
         'query_string',
         'created_at',
     )

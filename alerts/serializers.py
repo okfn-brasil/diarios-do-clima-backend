@@ -10,7 +10,7 @@ class AlertSerializer(serializers.ModelSerializer):
             'id',
             'user',
             'query_string',
-            'territory_id',
+            'territories',
             'sub_themes',
             'gov_entities',
             'created_at',

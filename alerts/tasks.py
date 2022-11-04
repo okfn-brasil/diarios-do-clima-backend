@@ -1,5 +1,7 @@
-from libs.ibge.city_abc import CityABC
 from django.utils import timezone
+from django.conf import settings
+from libs.ibge.city_abc import CityABC
+from datetime import timedelta
 from .models import Alert
 from libs.services import services
 from libs.querido_diario import QueridoDiarioABC
@@ -8,7 +10,7 @@ from celery import shared_task
 from accounts.models import User
 from plans.models import Plan
 from subscriptions.selectors import user_get_latest_plan_subscription
-from libs.utils.datetime import datetime_to_date_str_diario
+from libs.utils.datetime import datetime_to_datetime_str_diario
 from libs.utils.email import Email, send_email
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
@@ -29,7 +31,8 @@ class SingleAlertTask():
             self.get_gazettes()
             self.send_email_alert()
         except OnlyProPlanAllowed:
-            self.send_email_call_to_pro()
+            #self.send_email_call_to_pro()
+            pass
 
     def get_email(self):
         alert_email = self.alert.user.alert_email
@@ -45,40 +48,65 @@ class SingleAlertTask():
             raise OnlyProPlanAllowed()
 
     def get_gazettes(self) -> int:
-        now = timezone.now()
+        today = timezone.datetime.today()
+        yesterday = today - timedelta(days=1)
         first_hour = timezone.datetime(
-            now.year, now.month, now.day, hour=0, minute=0, second=0)
+            yesterday.year, yesterday.month, yesterday.day, hour=0, minute=0, second=0)
         last_hour = timezone.datetime(
-            now.year, now.month, now.day, hour=23, minute=59, second=59)
+            today.year, today.month, today.day, hour=23, minute=59, second=59)
         querido_diario: QueridoDiarioABC = services.get(QueridoDiarioABC)
-        self.published_since = datetime_to_date_str_diario(date=first_hour)
-        self.published_until = datetime_to_date_str_diario(date=last_hour)
+        self.scraped_since = datetime_to_datetime_str_diario(date=first_hour)
+        self.scraped_until = datetime_to_datetime_str_diario(date=last_hour)
 
-        filters = GazetteFilters(
+        self.filters = GazetteFilters(
             querystring=self.alert.query_string,
-            territory_id=self.alert.territory_id,
+            territory_ids=self.alert.territories,
             entities=self.alert.gov_entities,
             subtheme=self.alert.sub_themes,
-            published_since=self.published_since,
-            published_until=self.published_until,
+            scraped_since=self.scraped_since,
+            scraped_until=self.scraped_until,
         )
 
-        self.results: GazettesResult = querido_diario.gazettes(filters=filters)
+        self.results: GazettesResult = querido_diario.gazettes(
+            filters=self.filters,
+        )
+
+    def get_alert_url(self):
+        base_url = settings.FRONT_BASE_URL
+        url = f"{base_url}/educacao/busca?sort_by=relevance"
+        url += f"&scraped_since={self.scraped_since}&scraped_until={self.scraped_until}"
+
+        if self.alert.query_string:
+            url += f"&querystring={self.alert.query_string}"
+
+        if self.alert.territories is not None and len(self.alert.territories) > 0:
+            url += "&local=" + "&local=".join(self.alert.territories)
+
+        if self.alert.sub_themes is not None and len(self.alert.sub_themes) > 0:
+            url += "&subthemes=" + "&subthemes=".join(self.alert.sub_themes)
+
+        if self.alert.gov_entities is not None and len(self.alert.gov_entities) > 0:
+            url += "&entities=" + "&entities=".join(self.alert.gov_entities)
+
+        return url
 
     def email_get_alert(self) -> Email:
         city_api: CityABC = services.get(CityABC)
-        territory_name = city_api.get_name(self.alert.territory_id)
+        territory_ids = [city_api.get_name(city_id)
+                         for city_id in self.alert.territories]
 
         context = {
+            'title': settings.PROJECT_TITLE,
             'total_gazettes': self.results.total_gazettes,
             'query_string': self.alert.query_string,
-            'territory_id': territory_name,
+            'territory_ids': territory_ids,
             'gov_entities': self.alert.gov_entities,
             'sub_themes': self.alert.sub_themes,
-            'published_since': self.published_since,
-            'published_until': self.published_until,
-        }
-        subject = 'Diario do Clima - Alerta'
+            'scraped_since': self.scraped_since,
+            'scraped_until': self.scraped_until,
+            'url': self.get_alert_url(),
+        }        
+        subject = f"{settings.PROJECT_TITLE} - Alerta"
 
         html_message = render_to_string('alerts/email.html', context)
         plain_message = strip_tags(html_message)
@@ -98,8 +126,8 @@ class SingleAlertTask():
             send_email(email=email)
 
     def email_get_pro_lead(self) -> Email:
-        return Email(
-            subject='Diario do Clima - Alerta PRO',
+        return Email(            
+            subject=f"{settings.PROJECT_TITLE} - Alerta PRO",
             message='Sua conta não é PRO mas tem alertas ativos, porque não mudar para o plano PRO?',
             email_to=[
                 self.get_email(),
@@ -111,7 +139,7 @@ class SingleAlertTask():
         send_email(email=email)
 
 
-@shared_task
+@ shared_task
 def single_alert_task(alert_id: str):
     task = SingleAlertTask(alert_id=alert_id)
     task()
@@ -127,7 +155,7 @@ class DailySetupTask:
             self.subtask(alert_id=alert_id)
 
 
-@shared_task
+@ shared_task
 def daily_setup_task():
     task = DailySetupTask(subtask=single_alert_task.delay)
     task()

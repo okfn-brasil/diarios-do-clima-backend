@@ -2,6 +2,8 @@ import os
 
 from celery import Celery
 from celery.schedules import crontab
+from django.conf import settings
+
 # TODO: add django-celery-beat when django 4 suport is added
 # https://github.com/celery/django-celery-beat
 
@@ -20,12 +22,12 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 app.conf.beat_schedule = {
     'run-every-day-at-01am-alerts': {
         'task': 'alerts.tasks.daily_setup_task',
-        'schedule': crontab(hour=1, minute=0),
+        'schedule': crontab(hour=settings.ALERT_HOUR, minute=settings.ALERT_MINUTE),
         # 'schedule': 10.0,
     },
     'run-every-day-at-01am-trial-end': {
         'task': 'subscriptions.tasks.daily_setup_trial_end_task',
-        'schedule': crontab(hour=1, minute=0),
+        'schedule': crontab(hour=settings.ALERT_HOUR, minute=settings.ALERT_MINUTE),
         # 'schedule': 10.0,
     },
 }
