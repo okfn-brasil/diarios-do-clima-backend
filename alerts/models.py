@@ -9,8 +9,13 @@ User = get_user_model()
 class Alert(models.Model):
     id = models.UUIDField(default=uuid4, primary_key=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    query_string = models.CharField(max_length=255)
-    territory_id = models.CharField(max_length=7, null=True, blank=True)
+    query_string = models.CharField(max_length=255)    
+    territories = ArrayField(
+        models.CharField(
+            max_length=7,
+        ),
+        blank=True, null=True,
+    )
     sub_themes = ArrayField(
         models.CharField(
             max_length=50,
