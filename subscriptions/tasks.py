@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.utils import timezone
 from .models import PlanSubscription
 from celery import shared_task
@@ -13,8 +14,8 @@ class SingleTrialEndTask:
 
     def __call__(self) -> None:
         email = Email(
-            email_to=[self.user.email],
-            subject="Diario do Clima final do periodo de teste",
+            email_to=[self.user.email],            
+            subject=f"{settings.PROJECT_TITLE} final do periodo de teste",
             message="Seu trial terminam em dois(2) dias.",
         )
         send_email(email=email)
