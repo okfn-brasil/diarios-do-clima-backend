@@ -48,7 +48,7 @@ class TestAlertViewSet(APITestCase):
         cls.alert = Alert(
             user=cls.user,
             query_string="ffg, yj",
-            territory_id="1501402",
+            territories=["1501402", ],
             sub_themes=[
                 "tutorial",
                 "django",
@@ -67,7 +67,7 @@ class TestAlertViewSet(APITestCase):
         cls.alert_other = Alert(
             user=cls.user_other,
             query_string="ffg, yj",
-            territory_id="1501402",
+            territories=["1501402", ],
             sub_themes=[
                 "tutorial",
                 "django",

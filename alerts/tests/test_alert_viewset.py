@@ -56,7 +56,7 @@ class TestAlertViewSet(APITestCase):
         self.alert = Alert(
             user=self.user,
             query_string="ffg, yj",
-            territory_id="1501402",
+            territories=["1501402", ],
             sub_themes=[
                 "tutorial",
                 "django",
@@ -74,7 +74,7 @@ class TestAlertViewSet(APITestCase):
         self.alert_other = Alert(
             user=self.user_other,
             query_string="ffg, yj",
-            territory_id="1501402",
+            territories=["1501402", ],
             sub_themes=[
                 "tutorial",
                 "django",
@@ -141,7 +141,7 @@ class TestAlertViewSet(APITestCase):
 
         alert_data = {
             'query_string': 'new query',
-            'territory_id': '1501403',
+            'territories': ['1501403', ],
             'sub_themes': [
                 'SFA',
                 'DSEI'
@@ -160,7 +160,7 @@ class TestAlertViewSet(APITestCase):
 
         alert: Alert = Alert.objects.get(pk=self.alert.pk)
         self.assertEquals(alert.query_string, alert_data['query_string'])
-        self.assertEquals(alert.territory_id, alert_data['territory_id'])
+        self.assertListEqual(alert.territories, alert_data['territories'])
         self.assertEquals(alert.sub_themes, alert_data['sub_themes'])
         self.assertEquals(alert.gov_entities, alert_data['gov_entities'])
 
