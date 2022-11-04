@@ -66,7 +66,7 @@ class SortByEnum(Enum):
 class GazetteFilters():
     entities: Optional[List[str]] = None
     subtheme: Optional[List[str]] = None
-    territory_id: Optional[str] = None
+    territory_ids: Optional[List[str]] = None
     scraped_since: Optional[str] = None
     scraped_until: Optional[str] = None
     published_since: Optional[str] = None
@@ -82,7 +82,7 @@ class GazetteFilters():
         return {
             "entities": self.entities,
             "subtheme": self.subtheme,
-            "territory_id": self.territory_id,
+            "territory_ids": self.territory_ids,
             "scraped_since": self.scraped_since,
             "scraped_until": self.scraped_until,
             "published_since": self.published_since,
