@@ -1,3 +1,4 @@
+from django.conf import settings
 from libs.utils.email import Email, send_email
 from django.apps import AppConfig
 from django.db.models.signals import post_save
@@ -27,11 +28,9 @@ def init_signals(app: AppConfig):
 
 @receiver(reset_password_token_created)
 def password_reset_token_created(sender, instance, reset_password_token, *args, **kwargs):
-
     uri = "/redefinir-senha"
     key = reset_password_token.key
-    absolute = instance.request.build_absolute_uri(uri)
-    reset_password_url = f"{absolute}?token={key}"
+    reset_password_url = f"{settings.FRONT_BASE_URL}{uri}?token={key}"
 
     message = "Olá, \n"
     message += "Você pediu para redefinir sua senha, para fazê-lo basta clicar no link abaixo: \n"
