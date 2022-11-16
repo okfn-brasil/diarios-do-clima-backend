@@ -81,7 +81,7 @@ class GazettesView(APIView):
             since_date = timezone.make_aware(since_date)
 
             date_diff: timezone.timedelta = today - since_date
-            since_older_then_3_months = date_diff.days > 90
+            since_older_then_3_months = date_diff.days > 92
 
             if since_older_then_3_months and not self.plan.to_charge():
                 raise ValidationError(
