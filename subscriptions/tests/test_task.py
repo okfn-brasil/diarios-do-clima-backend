@@ -49,7 +49,7 @@ class APIPostPlanSubscriptionTestCase(APITestCase):
         user_subscription: PlanSubscription = user_get_latest_plan_subscription(
             user=self.user)
         trial_end = timezone.datetime.today() + timezone.timedelta(days=1)
-        user_subscription.trial_end_at = trial_end
+        user_subscription.trial_end_at = trial_end.date()
         user_subscription.save()
 
         task = DailySetupTrialEndTask(subtask=dummy)
