@@ -152,11 +152,8 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 30
 }
 
-CORS_ALLOWED_ORIGINS = [
-    'https://sandbox.pagseguro.uol.com.br',
-    'https://diariodoclima.jurema.la',
-    'https://queridodiario.jurema.la',
-]
+CORS_ALLOWED_ORIGINS = config('DIARIO_CORS_ALLOWED_ORIGINS', cast=Csv())
+CSRF_TRUSTED_ORIGINS = config('DIARIO_CSRF_TRUSTED_ORIGINS', cast=Csv())
 
 USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
