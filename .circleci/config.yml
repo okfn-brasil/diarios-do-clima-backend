@@ -7,6 +7,8 @@ jobs:
           DIARIO_SECRET_KEY: django-insecure-41u6jo_*yg2=1tabsc8ul3-!m!n1hywuj9$t_bv*jb2ju+s9-3
           DIARIO_DEBUG: True
           DIARIO_ALLOWED_HOSTS: localhost
+          DIARIO_CORS_ALLOWED_ORIGINS: https://sandbox.pagseguro.uol.com.br, https://diariodoclima.jurema.la
+          DIARIO_CSRF_TRUSTED_ORIGINS: https://staging.diariodoclima.jurema.la
           DIARIO_DB_URL: postgres://postgres@localhost/postgres?sslmode=disable
           DIARIO_PAGSEGURO_EMAIL: email@gmail.com
           DIARIO_PAGSEGURO_TOKEN: ADD0FRA720C4B6AA4058FD1F36DAG4
