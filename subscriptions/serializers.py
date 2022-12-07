@@ -8,4 +8,5 @@ class PlanSubscriptionSerializer(serializers.ModelSerializer):
         fields = (
             'plan',
             'pagseguro_code',
+            'trial_end_at',
         )
