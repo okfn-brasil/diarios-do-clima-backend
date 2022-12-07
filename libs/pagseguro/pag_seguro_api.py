@@ -6,6 +6,7 @@ from .exceptions import PreApprovalsValidationException, GenericSessionError
 
 from requests.adapters import HTTPAdapter, Retry
 
+
 class PagSeguroApi(PagSeguroApiABC):
     headers = {
         "Accept": "application/vnd.pagseguro.com.br.v3+json;charset=ISO-8859-1",
@@ -18,18 +19,19 @@ class PagSeguroApi(PagSeguroApiABC):
         self.ws_url = ws_url
         self.auth = f"email={self.email}&token={self.token}"
 
-    def get_session(self) -> str:     
+    def get_session(self) -> str:
         request_session = requests.Session()
-        retries = Retry(total=5, backoff_factor=1, status_forcelist=[ 502, 503, 504 ])
+        retries = Retry(total=5, backoff_factor=1,
+                        status_forcelist=[502, 503, 504])
         request_session.mount('http://', HTTPAdapter(max_retries=retries))
-        request_session.mount('https://', HTTPAdapter(max_retries=retries))        
+        request_session.mount('https://', HTTPAdapter(max_retries=retries))
 
         url = f"{self.ws_url}/v2/sessions?{self.auth}"
         response = request_session.post(url)
-        
+
         if response.status_code != 200:
             raise GenericSessionError("erro generating session")
-        
+
         session = ET.fromstring(response.text)
         id = session.find('id')
         return id.text
@@ -79,3 +81,21 @@ class PagSeguroApi(PagSeguroApiABC):
 
         if response.status_code != 204:
             raise Exception(response.json())
+
+    def subscription_orders(self, subscription_code: str):
+        url = f"{self.ws_url}/pre-approvals/{subscription_code}/payment-orders?{self.auth}"
+        response = requests.get(url, headers=self.headers)
+        if response.status_code != 200:
+            raise Exception(response.json())
+
+        data = response.json()
+        from .serializers.models import OrdersResult, Order
+        result = OrdersResult(**data)
+        orders = [Order(**result.paymentOrders[orderKey])
+                  for orderKey in result.paymentOrders]
+        orders.sort(
+            reverse=True,
+            key=lambda order: order.schedulingDate
+        )
+
+        return [order.dict() for order in orders]
