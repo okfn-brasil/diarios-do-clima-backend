@@ -59,7 +59,7 @@ class UserPlanSubscriptionSerializer(serializers.ModelSerializer):
             "id",
             "plan",
             "status",
-            "trial_end_at"
+            "trial_end_at",
             "created_at",
         )
 
