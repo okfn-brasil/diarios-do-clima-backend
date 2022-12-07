@@ -19,6 +19,7 @@ validate-docbr = "^1.10.0"
 celery = "^5.2.6"
 redis = "^4.3.1"
 django-rest-passwordreset = "^1.2.1"
+pydantic = "^1.10.2"
 
 [tool.poetry.dev-dependencies]
 autopep8 = "^1.6.0"

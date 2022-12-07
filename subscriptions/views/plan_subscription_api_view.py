@@ -70,7 +70,7 @@ class PlanSubscriptionApiView(CreateAPIView):
         today = timezone.datetime.today()
         time_delta = timezone.timedelta(days=plan.trial_days)
         trial_end_at = today + time_delta
-        plan_subscription.trial_end_at = trial_end_at
+        plan_subscription.trial_end_at = trial_end_at.date()
 
     def set_plan_subscription_status(self, plan_subscription: PlanSubscription) -> None:
         plan: Plan = plan_subscription.plan
