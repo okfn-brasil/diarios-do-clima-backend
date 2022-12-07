@@ -64,3 +64,7 @@ class PagSeguroApiABC(abc.ABC):
     @abc.abstractmethod
     def subscription_change_credit_card(self, subscription_code: str, data: CreditCardChangeData):
         pass
+
+    @abc.abstractmethod
+    def subscription_orders(self, subscription_code: str):
+        pass
