@@ -113,7 +113,7 @@ class APIGazettesTestCase(APITestCase):
     def test_gazettes_get_pro_subtheme_query_with_non_pro_user(self):
         self.login()
         response = self.client.get(
-            reverse('gazettes') + '?subtheme=sub1&subtheme=sub2',
+            reverse('gazettes') + '?subthemes=sub1&subthemes=sub2',
         )
         self.assertEquals(response.status_code, status.HTTP_400_BAD_REQUEST)
         data = response.json()
@@ -126,6 +126,6 @@ class APIGazettesTestCase(APITestCase):
         self.setup_user_pro_plan()
         response = self.client.get(
             reverse('gazettes') +
-            '?published_since=2015-01-01&subtheme=sub1&subtheme=sub2',
+            '?published_since=2015-01-01&subthemes=sub1&subthemes=sub2',
         )
         self.assertEquals(response.status_code, status.HTTP_200_OK)

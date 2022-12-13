@@ -42,8 +42,8 @@ class GazettesView(APIView):
 
     def setup_query_data(self):
         entities = self.request.GET.getlist('entities', [])
-        self.subthemes = self.request.GET.getlist('subtheme', [])
-        self.territory_ids = self.request.GET.getlist('territory_id', [])
+        self.subthemes = self.request.GET.getlist('subthemes', [])
+        self.territory_ids = self.request.GET.getlist('territory_ids', [])
 
         self.scraped_since = self.request.GET.get("scraped_since", None)
         self.scraped_until = self.request.GET.get("scraped_until", None)
@@ -52,7 +52,7 @@ class GazettesView(APIView):
 
         self.filters_data = {
             'entities': entities,
-            'subtheme': self.subthemes,
+            'subthemes': self.subthemes,
             'territory_ids': self.territory_ids,
             'scraped_since': self.scraped_since,
             'scraped_until': self.scraped_until,
