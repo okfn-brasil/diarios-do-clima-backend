@@ -65,7 +65,7 @@ class SortByEnum(Enum):
 @dataclass
 class GazetteFilters():
     entities: Optional[List[str]] = None
-    subtheme: Optional[List[str]] = None
+    subthemes: Optional[List[str]] = None
     territory_ids: Optional[List[str]] = None
     scraped_since: Optional[str] = None
     scraped_until: Optional[str] = None
@@ -81,7 +81,7 @@ class GazetteFilters():
     def json(self):
         return {
             "entities": self.entities,
-            "subtheme": self.subtheme,
+            "subthemes": self.subthemes,
             "territory_ids": self.territory_ids,
             "scraped_since": self.scraped_since,
             "scraped_until": self.scraped_until,
