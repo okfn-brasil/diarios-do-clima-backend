@@ -62,7 +62,7 @@ class SingleAlertTask():
             querystring=self.alert.query_string,
             territory_ids=self.alert.territories,
             entities=self.alert.gov_entities,
-            subtheme=self.alert.sub_themes,
+            subthemes=self.alert.sub_themes,
             scraped_since=self.scraped_since,
             scraped_until=self.scraped_until,
         )
