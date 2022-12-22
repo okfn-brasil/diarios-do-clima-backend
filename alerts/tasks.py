@@ -90,22 +90,26 @@ class SingleAlertTask():
 
         return url
 
-    def email_get_alert(self) -> Email:
+    def get_terrotories_names(self):
         city_api: CityABC = services.get(CityABC)
-        territory_ids = [city_api.get_name(city_id)
-                         for city_id in self.alert.territories]
+        if self.alert.territories is None:
+            return []
+        else:
+            return [city_api.get_name(city_id)
+                    for city_id in self.alert.territories]
 
+    def email_get_alert(self) -> Email:
         context = {
             'title': settings.PROJECT_TITLE,
             'total_gazettes': self.results.total_gazettes,
             'query_string': self.alert.query_string,
-            'territory_ids': territory_ids,
+            'territory_ids': self.get_terrotories_names(),
             'gov_entities': self.alert.gov_entities,
             'sub_themes': self.alert.sub_themes,
             'scraped_since': self.scraped_since,
             'scraped_until': self.scraped_until,
             'url': self.get_alert_url(),
-        }        
+        }
         subject = f"{settings.PROJECT_TITLE} - Alerta"
 
         html_message = render_to_string('alerts/email.html', context)
@@ -126,7 +130,7 @@ class SingleAlertTask():
             send_email(email=email)
 
     def email_get_pro_lead(self) -> Email:
-        return Email(            
+        return Email(
             subject=f"{settings.PROJECT_TITLE} - Alerta PRO",
             message='Sua conta não é PRO mas tem alertas ativos, porque não mudar para o plano PRO?',
             email_to=[

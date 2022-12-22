@@ -66,8 +66,7 @@ class TestAlertViewSet(APITestCase):
 
         cls.alert_other = Alert(
             user=cls.user_other,
-            query_string="ffg, yj",
-            territories=["1501402", ],
+            query_string="ffg, yj",            
             sub_themes=[
                 "tutorial",
                 "django",
@@ -145,6 +144,18 @@ class TestAlertViewSet(APITestCase):
             gazettes=[],
         )
         task = SingleAlertTask(alert_id=self.alert.id)
+        task()
+        self.assertEquals(task.results.total_gazettes, 5)
+        emails_len = len(mail.outbox)
+        self.assertEquals(emails_len, 1)
+
+    def test_single_task_pro_user_many_with_no_territory(self):
+        self.setup_pro_plan()
+        self.QueridoDiarioMock.gazettes.return_value = GazettesResult(
+            total_gazettes=5,
+            gazettes=[],
+        )
+        task = SingleAlertTask(alert_id=self.alert_other.id)
         task()
         self.assertEquals(task.results.total_gazettes, 5)
         emails_len = len(mail.outbox)
