@@ -1,4 +1,4 @@
-FROM docker.io/python:3.9
+FROM docker.io/python:3.8
 
 ARG HOME_DIR=/opt/app
 ARG UNAME=diariodoclima
