@@ -14,3 +14,5 @@ django-rest-passwordreset
 django-anymail[mailjet]
 pydantic
 whitenoise
+django-storages
+boto3

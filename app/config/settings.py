@@ -64,7 +64,6 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
-    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -133,13 +132,28 @@ USE_I18N = True
 
 USE_TZ = True
 
+if DEBUG:
+    STORAGES = {
+        "staticfiles": {"BACKEND": 'whitenoise.storage.CompressedManifestStaticFilesStorage'}
+    }
+    MIDDLEWARE.append("whitenoise.middleware.WhiteNoiseMiddleware")
+else:
+    STORAGES = {
+        "default": {"BACKEND": "storages.backends.s3boto3.S3Boto3Storage"},
+        "staticfiles": {"BACKEND": "storages.backends.s3boto3.S3ManifestStaticStorage"}
+    }
+    AWS_ACCESS_KEY_ID = config("STORAGE_ACCESS_KEY")
+    AWS_SECRET_ACCESS_KEY = config("STORAGE_ACCESS_SECRET")
+    AWS_STORAGE_BUCKET_NAME = config("STORAGE_BUCKET")
+    AWS_S3_REGION_NAME = config("STORAGE_REGION")
+    AWS_S3_ENDPOINT_URL = config("STORAGE_ENDPOINT")
+    AWS_DEFAULT_ACL = 'public-read'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
-STATIC_URL = config("STATIC_URL", default="api/static/")
+STATIC_URL = config("STATIC_URL", default="static/")
 STATIC_ROOT = Path(BASE_DIR, "static")
-# STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = "media/"
 MEDIA_ROOT = Path(BASE_DIR, "media")
