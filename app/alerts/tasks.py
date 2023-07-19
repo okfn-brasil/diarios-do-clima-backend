@@ -1,23 +1,27 @@
-from django.utils import timezone
-from django.conf import settings
-from libs.ibge.city_abc import CityABC
 from datetime import timedelta
-from .models import Alert
-from libs.services import services
-from libs.querido_diario import QueridoDiarioABC
-from libs.querido_diario.serializers import GazetteFilters, GazettesResult
+
 from celery import shared_task
-from accounts.models import User
+from django.conf import settings
+from django.template.loader import render_to_string
+from django.utils import timezone
+from django.utils.html import strip_tags
 from plans.models import Plan
 from subscriptions.selectors import user_get_latest_plan_subscription
+
+from accounts.models import User
+from libs.ibge.city_abc import CityABC
+from libs.querido_diario import QueridoDiarioABC
+from libs.querido_diario.serializers import GazetteFilters, GazettesResult
+from libs.services import services
 from libs.utils.datetime import datetime_to_datetime_str_diario
 from libs.utils.email import Email, send_email
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
+
+from .models import Alert
 
 
 class OnlyProPlanAllowed(Exception):
     pass
+
 
 class SingleAlertTask:
     def __init__(self, alert_id):
@@ -30,7 +34,7 @@ class SingleAlertTask:
             self.get_gazettes()
             self.send_email_alert()
         except OnlyProPlanAllowed:
-            #self.send_email_call_to_pro()
+            # self.send_email_call_to_pro()
             pass
 
     def get_email(self):
@@ -74,20 +78,20 @@ class SingleAlertTask:
 
     def get_alert_url(self):
         base_url = settings.FRONT_BASE_URL
-        url = f"{base_url}/busca?sort_by=relevance&pre_tags=<b>&post_tags=</b>"
+        url = f"{base_url}/busca?order=relevance"
         url += f"&scraped_since={self.scraped_since}&scraped_until={self.scraped_until}"
 
         if self.alert.query_string:
-            url += f"&querystring={self.alert.query_string}"
+            url += f"&query={self.alert.query_string}"
 
         if self.alert.territories is not None and len(self.alert.territories) > 0:
-            url += "&local=" + "&local=".join(self.alert.territories)
+            url += "&territory_id=" + ",".join(self.alert.territories)
 
         if self.alert.sub_themes is not None and len(self.alert.sub_themes) > 0:
-            url += "&subthemes=" + "&subthemes=".join(self.alert.sub_themes)
+            url += "&themes=" + ",".join(self.alert.sub_themes)
 
         if self.alert.gov_entities is not None and len(self.alert.gov_entities) > 0:
-            url += "&entities=" + "&entities=".join(self.alert.gov_entities)
+            url += "&ente=" + ",".join(self.alert.gov_entities)
 
         return url
 
@@ -131,10 +135,10 @@ class SingleAlertTask:
     def email_get_pro_lead(self) -> Email:
         return Email(
             subject=f"{settings.PROJECT_TITLE} - Alerta PRO",
-            message='Sua conta não é PRO mas tem alertas ativos, porque não mudar para o plano PRO?',
+            message="Sua conta não é PRO mas tem alertas ativos, porque não mudar para o plano PRO?",
             email_to=[
                 self.get_email(),
-            ]
+            ],
         )
 
     def send_email_call_to_pro(self) -> None:
@@ -142,7 +146,7 @@ class SingleAlertTask:
         send_email(email=email)
 
 
-@ shared_task
+@shared_task
 def single_alert_task(alert_id: str):
     task = SingleAlertTask(alert_id=alert_id)
     task()
