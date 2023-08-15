@@ -11,13 +11,13 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 import logging
-from libs.pagseguro import PagSeguroApiABC, PagSeguroApi
 from pathlib import Path
 
 from decouple import Csv, config
 from dj_database_url import parse as db_url
 
 from libs.ibge import City, CityABC
+from libs.pagseguro import PagSeguroApi, PagSeguroApiABC
 from libs.querido_diario import QueridoDiario, QueridoDiarioABC
 from libs.services import services
 
@@ -29,37 +29,36 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config('DIARIO_SECRET_KEY')
+SECRET_KEY = config("DIARIO_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config('DIARIO_DEBUG', cast=bool, default=False)
+DEBUG = config("DIARIO_DEBUG", cast=bool, default=False)
 
 
-ALLOWED_HOSTS = config('DIARIO_ALLOWED_HOSTS', cast=Csv())
-FRONT_BASE_URL = config('FRONT_BASE_URL')
+ALLOWED_HOSTS = config("DIARIO_ALLOWED_HOSTS", cast=Csv())
+FRONT_BASE_URL = config("FRONT_BASE_URL")
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'rest_framework',
-    'rest_framework_simplejwt',
-    'django_rest_passwordreset',
-    'corsheaders',
-    'accounts.apps.AccountsConfig',
-    "anymail",
-    'plans.apps.PlansConfig',
-    'subscriptions.apps.SubscriptionsConfig',
-    'billing.apps.BillingConfig',
-    'reports.apps.ReportsConfig',
-    'alerts.apps.AlertsConfig',
-    'querido_diario.apps.QueridoDiarioConfig',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "rest_framework",
+    "rest_framework_simplejwt",
+    "django_rest_passwordreset",
+    "corsheaders",
+    "accounts.apps.AccountsConfig",
+    "plans.apps.PlansConfig",
+    "subscriptions.apps.SubscriptionsConfig",
+    "billing.apps.BillingConfig",
+    "reports.apps.ReportsConfig",
+    "alerts.apps.AlertsConfig",
+    "querido_diario.apps.QueridoDiarioConfig",
 ]
 
 MIDDLEWARE = [
@@ -98,7 +97,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
-    'default': db_url(config('DIARIO_DB_URL'), conn_max_age=600),
+    "default": db_url(config("DIARIO_DB_URL"), conn_max_age=600),
 }
 
 
@@ -134,20 +133,41 @@ USE_TZ = True
 
 if DEBUG:
     STORAGES = {
-        "staticfiles": {"BACKEND": 'whitenoise.storage.CompressedManifestStaticFilesStorage'}
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"
+        }
     }
     MIDDLEWARE.append("whitenoise.middleware.WhiteNoiseMiddleware")
+
+    EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+    EMAIL_HOST = config("EMAIL_HOST")
+    EMAIL_HOST_USER = config("EMAIL_HOST_USER")
+    EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
+    EMAIL_PORT = config("EMAIL_PORT")
 else:
     STORAGES = {
         "default": {"BACKEND": "storages.backends.s3boto3.S3Boto3Storage"},
-        "staticfiles": {"BACKEND": "storages.backends.s3boto3.S3ManifestStaticStorage"}
+        "staticfiles": {"BACKEND": "storages.backends.s3boto3.S3ManifestStaticStorage"},
     }
     AWS_ACCESS_KEY_ID = config("STORAGE_ACCESS_KEY")
     AWS_SECRET_ACCESS_KEY = config("STORAGE_ACCESS_SECRET")
     AWS_STORAGE_BUCKET_NAME = config("STORAGE_BUCKET")
     AWS_S3_REGION_NAME = config("STORAGE_REGION")
     AWS_S3_ENDPOINT_URL = config("STORAGE_ENDPOINT")
-    AWS_DEFAULT_ACL = 'public-read'
+    AWS_DEFAULT_ACL = "public-read"
+
+    INSTALLED_APPS.append("anymail")
+    EMAIL_BACKEND = "anymail.backends.amazon_ses.EmailBackend"
+    AWS_SES_ACCESS_KEY = config("AWS_SES_ACCESS_KEY")
+    AWS_SES_ACCESS_SECRET = config("AWS_SES_ACCESS_SECRET")
+    AWS_SES_REGION = config("AWS_SES_REGION")
+    ANYMAIL = {
+        "AMAZON_SES_CLIENT_PARAMS": {
+            "aws_access_key_id": AWS_SES_ACCESS_KEY,
+            "aws_secret_access_key": AWS_SES_ACCESS_SECRET,
+            "region_name": AWS_SES_REGION,
+        },
+    }
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
@@ -172,9 +192,9 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 30,
 }
 
-CORS_ALLOWED_ORIGINS = config('DIARIO_CORS_ALLOWED_ORIGINS', cast=Csv())
+CORS_ALLOWED_ORIGINS = config("DIARIO_CORS_ALLOWED_ORIGINS", cast=Csv())
 CORS_ALLOWED_ORIGIN_REGEXES = config("DIARIO_ALLOWED_ORIGIN_REGEXES", cast=Csv())
-CSRF_TRUSTED_ORIGINS = config('DIARIO_CSRF_TRUSTED_ORIGINS', cast=Csv())
+CSRF_TRUSTED_ORIGINS = config("DIARIO_CSRF_TRUSTED_ORIGINS", cast=Csv())
 
 USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
@@ -186,17 +206,20 @@ CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "America/Sao_Paulo"
 
-DIARIO_DEFAULT_FREE_PLAN_ID = '482cfe5c-2401-4421-8535-daa42ec1c41d'
+DIARIO_DEFAULT_FREE_PLAN_ID = "482cfe5c-2401-4421-8535-daa42ec1c41d"
 
-DIARIO_PAGSEGURO_EMAIL = config('DIARIO_PAGSEGURO_EMAIL')
-DIARIO_PAGSEGURO_TOKEN = config('DIARIO_PAGSEGURO_TOKEN')
-DIARIO_PAGSEGURO_WS_URL = config('DIARIO_PAGSEGURO_WS_URL')
+DIARIO_PAGSEGURO_EMAIL = config("DIARIO_PAGSEGURO_EMAIL")
+DIARIO_PAGSEGURO_TOKEN = config("DIARIO_PAGSEGURO_TOKEN")
+DIARIO_PAGSEGURO_WS_URL = config("DIARIO_PAGSEGURO_WS_URL")
 
-services.register(PagSeguroApiABC, PagSeguroApi(
-    email=DIARIO_PAGSEGURO_EMAIL,
-    token=DIARIO_PAGSEGURO_TOKEN,
-    ws_url=DIARIO_PAGSEGURO_WS_URL,
-))
+services.register(
+    PagSeguroApiABC,
+    PagSeguroApi(
+        email=DIARIO_PAGSEGURO_EMAIL,
+        token=DIARIO_PAGSEGURO_TOKEN,
+        ws_url=DIARIO_PAGSEGURO_WS_URL,
+    ),
+)
 
 DIARIO_QUERIDO_DIARIO_API_URL = config("DIARIO_QUERIDO_DIARIO_API_URL")
 DIARIO_QUERIDO_DIARIO_API_THEME = config("DIARIO_QUERIDO_DIARIO_API_THEME")
@@ -211,29 +234,13 @@ services.register(
 
 services.register(CityABC, City())
 
-#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_BACKEND = "anymail.backends.mailjet.EmailBackend"
-MAILJET_API_URL = "https://api.mailjet.com/v3.1/"
-
-MAILJET_API_KEY = config("MAILJET_API_KEY")
-MAILJET_SECRET_KEY = config("MAILJET_SECRET_KEY")
-
 EMAIL_FILE_PATH = Path(BASE_DIR, "emails")
 
-# EMAIL_HOST = config('EMAIL_HOST')
-# EMAIL_HOST_USER = config('EMAIL_HOST_USER')
-# EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
-# EMAIL_PORT = config('EMAIL_PORT')
 EMAIL_USE_TLS = True
-DEFAULT_FROM_EMAIL = config('DEFAULT_FROM_EMAIL')
-QUOTATION_TO_EMAIL = config('QUOTATION_TO_EMAIL')
+DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
+QUOTATION_TO_EMAIL = config("QUOTATION_TO_EMAIL")
 SERVER_EMAIL = config("SERVER_EMAIL")
 
-
-ANYMAIL = {
-    "MAILJET_API_KEY": MAILJET_API_KEY,
-    "MAILJET_SECRET_KEY": MAILJET_SECRET_KEY,
-}
 
 PROJECT_TITLE = config("PROJECT_TITLE")
 ALERT_HOUR = config("ALERT_HOUR", cast=int, default=1)

@@ -11,7 +11,7 @@ validate-docbr
 celery
 redis
 django-rest-passwordreset
-django-anymail[mailjet]
+django-anymail[amazon-ses]
 pydantic
 whitenoise
 django-storages

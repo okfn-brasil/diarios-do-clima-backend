@@ -9,7 +9,7 @@ ENV PYTHONPATH=$HOME_DIR
 
 RUN useradd --no-log-init --system $UNAME && \
 	apt-get update -y && \
-  apt-get install -y python3.9-dev wait-for-it
+  apt-get install -y python3.8-dev wait-for-it
 
 WORKDIR $HOME_DIR
 
