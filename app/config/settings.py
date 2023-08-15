@@ -245,5 +245,6 @@ SERVER_EMAIL = config("SERVER_EMAIL")
 PROJECT_TITLE = config("PROJECT_TITLE")
 ALERT_HOUR = config("ALERT_HOUR", cast=int, default=1)
 ALERT_MINUTE = config("ALERT_MINUTE", cast=int, default=0)
+ALERT_EMAIL_SUBJECT = config("ALERT_EMAIL_SUBJECT")
 
 logging.basicConfig(level=logging.DEBUG)
