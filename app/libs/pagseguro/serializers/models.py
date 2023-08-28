@@ -1,10 +1,11 @@
 from datetime import datetime
+
 from pydantic import BaseModel
 
 
 class OrdersResult(BaseModel):
     date: datetime
-    resultsInThisPage: str
+    resultsInThisPage: int
     totalPages: int
     currentPage: int
     paymentOrders: dict
@@ -26,5 +27,5 @@ class Order(BaseModel):
 
     def dict(self, *args, **kwargs):
         data = super().dict(*args, **kwargs)
-        data['status_verbose'] = self.get_status_verbose()
+        data["status_verbose"] = self.get_status_verbose()
         return data
