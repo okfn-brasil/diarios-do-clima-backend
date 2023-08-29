@@ -134,8 +134,8 @@ class SingleAlertTask:
 
     def email_get_pro_lead(self) -> Email:
         return Email(
-            subject=f"[{settings.PROJECT_TITLE}] Alerta PRO",
-            message="Sua conta não é PRO mas tem alertas ativos, porque não mudar para o plano PRO?",
+            subject=f"[{settings.PROJECT_TITLE}] Alertas PRO",
+            message="""Olá!\n\nSua conta não é PRO mas tem alertas ativos, porque não mudar para o plano PRO?\n\nAcesse https://diariodoclima.org.br/planos e confira as funcionalidades!\n\n Atenciosamente,\nEquipe Diário do Clima.""",
             email_to=[
                 self.get_email(),
             ],
