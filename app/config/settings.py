@@ -52,6 +52,13 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "django_rest_passwordreset",
     "corsheaders",
+    "health_check",
+    "health_check.db",
+    "health_check.cache",
+    "health_check.storage",
+    "health_check.contrib.migrations",
+    "health_check.contrib.celery",
+    "health_check.contrib.celery_ping",
     "accounts.apps.AccountsConfig",
     "plans.apps.PlansConfig",
     "subscriptions.apps.SubscriptionsConfig",
@@ -145,6 +152,7 @@ if DEBUG:
     EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD")
     EMAIL_PORT = config("EMAIL_PORT")
 else:
+    INSTALLED_APPS.append("health_check.contrib.s3boto3_storage")
     STORAGES = {
         "default": {"BACKEND": "storages.backends.s3boto3.S3Boto3Storage"},
         "staticfiles": {"BACKEND": "storages.backends.s3boto3.S3ManifestStaticStorage"},
