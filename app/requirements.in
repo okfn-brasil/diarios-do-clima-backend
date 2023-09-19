@@ -16,3 +16,4 @@ pydantic
 whitenoise
 django-storages
 boto3
+django-health-check

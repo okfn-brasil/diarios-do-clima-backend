@@ -1,0 +1,29 @@
+services:
+  diario-do-clima-backend-server:
+    volumes:
+      - web-static:/opt/app/static
+    links:
+      - diario-do-clima-postgres:postgres
+      - diario-do-clima-redis:redis
+
+  diario-do-clima-backend-celery-beat:
+    links:
+      - diario-do-clima-postgres:postgres
+      - diario-do-clima-redis:redis
+
+  diario-do-clima-backend-celery-worker:
+    links:
+      - diario-do-clima-postgres:postgres
+      - diario-do-clima-redis:redis
+
+  diario-do-clima-postgres:
+    image: postgres:latest
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data/
+    env_file: .postgres.env
+
+volumes:
+  web-static:
+  pgdata:
