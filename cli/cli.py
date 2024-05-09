@@ -119,6 +119,6 @@ def update_requirements(dev):
 
     workdir, suffix = (PROJECT_ROOT, "-dev") if dev else (APP_DIR, "")
     run_command(
-        f"pip-compile {workdir}/requirements{suffix}.in > {workdir}/requirements{suffix}.txt",
+        f"pip-compile --allow-unsafe --generate-hashes --no-annotate {workdir}/requirements{suffix}.in > {workdir}/requirements{suffix}.txt",
         shell=True,
     )
