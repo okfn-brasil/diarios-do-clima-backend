@@ -14,7 +14,7 @@ def user_plan_subscription_cancel(user: User):
     )
     plan: Plan = plan_subscription.plan
 
-    if str(plan.id) == settings.DIARIO_DEFAULT_FREE_PLAN_ID:
+    if str(plan.id) == settings.DIARIOS_DEFAULT_FREE_PLAN_ID:
         raise Exception("can not cancel default free plan")
 
     create_user_default_plan_subscription(

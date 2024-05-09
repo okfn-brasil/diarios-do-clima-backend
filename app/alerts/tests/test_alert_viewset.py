@@ -11,7 +11,7 @@ class TestAlertViewSet(APITestCase):
     @classmethod
     def setUpUser(cls):
         cls.data_login = {
-            "email": "email@diariodoclima.org.br",
+            "email": "email@diariosdoclima.org.br",
             "password": "password",
         }
 
@@ -28,7 +28,7 @@ class TestAlertViewSet(APITestCase):
         cls.user.save()
 
         cls.user_other = User.objects.create_user(
-            email="email1@diariodoclima.org.br",
+            email="email1@diariosdoclima.org.br",
             password="password",
             city="Cidade",
             full_name="Nome Completo1",

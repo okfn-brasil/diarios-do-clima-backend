@@ -1,29 +1,29 @@
 services:
-  diario-do-clima-backend-server:
+  diarios-do-clima-backend-server:
     links:
-      - diario-do-clima-redis:redis
+      - diarios-do-clima-redis:redis
 
-  diario-do-clima-backend-celery-beat:
+  diarios-do-clima-backend-celery-beat:
     links:
-      - diario-do-clima-redis:redis
+      - diarios-do-clima-redis:redis
 
-  diario-do-clima-backend-celery-worker:
+  diarios-do-clima-backend-celery-worker:
     links:
-      - diario-do-clima-redis:redis
+      - diarios-do-clima-redis:redis
 
-  diario-do-clima-nginx:
+  diarios-do-clima-nginx:
     build: ./nginx
     restart: always
     ports:
       - "80:80"
       - "443:443"
     links:
-      - diario-do-clima-backend-server:backend
+      - diarios-do-clima-backend-server:backend
     volumes:
       - certbot-verify:/www/certbot:ro
       - certbot-keys:/etc/nginx/ssl:ro
 
-  diario-do-clima-certbot:
+  diarios-do-clima-certbot:
     image: docker.io/certbot/certbot:v2.6.0
     volumes:
       - certbot-verify:/var/www/certbot/:rw

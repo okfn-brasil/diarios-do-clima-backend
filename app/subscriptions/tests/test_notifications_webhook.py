@@ -20,7 +20,7 @@ class APIPlanSubscriptionNotificationsWebhookTestCase(APITestCase):
     @classmethod
     def setUpUser(cls):
         cls.data_login = {
-            'email': 'email@diariodoclima.org.br',
+            'email': 'email@diariosdoclima.org.br',
             'password': 'password',
         }
 
@@ -73,7 +73,7 @@ class APIPlanSubscriptionNotificationsWebhookTestCase(APITestCase):
 
         self.assertNotEquals(
             str(plan_subscription.plan.pk),
-            settings.DIARIO_DEFAULT_FREE_PLAN_ID,
+            settings.DIARIOS_DEFAULT_FREE_PLAN_ID,
         )
 
         data = {
@@ -120,5 +120,5 @@ class APIPlanSubscriptionNotificationsWebhookTestCase(APITestCase):
 
         self.assertEquals(
             str(curent_plan_subscription.plan.pk),
-            settings.DIARIO_DEFAULT_FREE_PLAN_ID,
+            settings.DIARIOS_DEFAULT_FREE_PLAN_ID,
         )

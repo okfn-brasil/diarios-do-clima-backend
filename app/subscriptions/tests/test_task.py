@@ -14,7 +14,7 @@ class APIPostPlanSubscriptionTestCase(APITestCase):
     def setUpClass(cls):
         super().setUpClass()
         cls.data_login = {
-            'email': 'email@diariodoclima.org.br',
+            'email': 'email@diariosdoclima.org.br',
             'password': 'password',
         }
 

@@ -11,7 +11,7 @@ class APIUserMeUpdateTestCase(APITestCase):
         super().setUpClass()
         cls.client = APIClient()
         cls.data_login = {
-            "email": "email@diariodoclima.org.br",
+            "email": "email@diariosdoclima.org.br",
             "password": "password",
         }
 

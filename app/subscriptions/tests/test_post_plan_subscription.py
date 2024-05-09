@@ -19,7 +19,7 @@ class APIPostPlanSubscriptionTestCase(APITestCase):
         super().setUpClass()
         cls.client = APIClient()
         cls.data_login = {
-            'email': 'email@diariodoclima.org.br',
+            'email': 'email@diariosdoclima.org.br',
             'password': 'password',
         }
 
@@ -64,7 +64,7 @@ class APIPostPlanSubscriptionTestCase(APITestCase):
         user_plan_id = plan.get('id', None)
 
         self.assertEqual(
-            user_plan_id, settings.DIARIO_DEFAULT_FREE_PLAN_ID
+            user_plan_id, settings.DIARIOS_DEFAULT_FREE_PLAN_ID
         )
 
         subscriptions_data = {

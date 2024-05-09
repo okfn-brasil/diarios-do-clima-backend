@@ -1,5 +1,5 @@
 services:
-  diario-do-clima-backend-server:
+  diarios-do-clima-backend-server:
     restart: always
     build: ./
     ports:
@@ -7,19 +7,19 @@ services:
     env_file: .env
     command: gunicorn config.wsgi:application -w 2 -b :8000 --reload
 
-  diario-do-clima-backend-celery-beat:
+  diarios-do-clima-backend-celery-beat:
     restart: always
     build: ./
     env_file: .env
     command: celery -A config beat -l INFO
 
-  diario-do-clima-backend-celery-worker:
+  diarios-do-clima-backend-celery-worker:
     restart: always
     build: ./
     env_file: .env
     command: celery -A config worker -l INFO
 
-  diario-do-clima-redis:
+  diarios-do-clima-redis:
     restart: always
     image: docker.io/redis:7.2-alpine
     ports:

@@ -1,7 +1,7 @@
 FROM docker.io/python:3.8
 
 ARG HOME_DIR=/opt/app
-ARG UNAME=diariodoclima
+ARG UNAME=diariosdoclima
 
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1

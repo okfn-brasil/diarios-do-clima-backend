@@ -18,7 +18,7 @@ class SingleTrialEndTask:
         email = Email(
             email_to=[self.user_email],
             subject=f"[{settings.PROJECT_TITLE}] Final do período de testes do plano PRO",
-            message="""Olá!\n\nSeu período de testes terminará dentro de dois (2) dias. Após este prazo, a cobrança pelo plano PRO será feita mensalmente na forma de pagamento que configurou.\n\nCaso decida cancelar o plano PRO, acesse https://diariodoclima.org.br/meus-dados e clique em "Cancelar assinatura".\n\nAtenciosamente,\nEquipe Diário do Clima.""",
+            message="""Olá!\n\nSeu período de testes terminará dentro de dois (2) dias. Após este prazo, a cobrança pelo plano PRO será feita mensalmente na forma de pagamento que configurou.\n\nCaso decida cancelar o plano PRO, acesse https://diariosdoclima.org.br/meus-dados e clique em "Cancelar assinatura".\n\nAtenciosamente,\nEquipe Diários do Clima.""",
         )
         send_email(email=email)
 

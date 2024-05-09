@@ -29,13 +29,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = config("DIARIO_SECRET_KEY")
+SECRET_KEY = config("DIARIOS_SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config("DIARIO_DEBUG", cast=bool, default=False)
+DEBUG = config("DIARIOS_DEBUG", cast=bool, default=False)
 
 
-ALLOWED_HOSTS = config("DIARIO_ALLOWED_HOSTS", cast=Csv())
+ALLOWED_HOSTS = config("DIARIOS_ALLOWED_HOSTS", cast=Csv())
 FRONT_BASE_URL = config("FRONT_BASE_URL")
 
 
@@ -104,7 +104,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
 DATABASES = {
-    "default": db_url(config("DIARIO_DB_URL"), conn_max_age=600),
+    "default": db_url(config("DIARIOS_DB_URL"), conn_max_age=600),
 }
 
 
@@ -200,9 +200,9 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 30,
 }
 
-CORS_ALLOWED_ORIGINS = config("DIARIO_CORS_ALLOWED_ORIGINS", cast=Csv())
-CORS_ALLOWED_ORIGIN_REGEXES = config("DIARIO_ALLOWED_ORIGIN_REGEXES", cast=Csv())
-CSRF_TRUSTED_ORIGINS = config("DIARIO_CSRF_TRUSTED_ORIGINS", cast=Csv())
+CORS_ALLOWED_ORIGINS = config("DIARIOS_CORS_ALLOWED_ORIGINS", cast=Csv())
+CORS_ALLOWED_ORIGIN_REGEXES = config("DIARIOS_ALLOWED_ORIGIN_REGEXES", cast=Csv())
+CSRF_TRUSTED_ORIGINS = config("DIARIOS_CSRF_TRUSTED_ORIGINS", cast=Csv())
 
 USE_X_FORWARDED_HOST = True
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
@@ -214,29 +214,29 @@ CELERY_TASK_SERIALIZER = "json"
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TIMEZONE = "America/Sao_Paulo"
 
-DIARIO_DEFAULT_FREE_PLAN_ID = "482cfe5c-2401-4421-8535-daa42ec1c41d"
+DIARIOS_DEFAULT_FREE_PLAN_ID = "482cfe5c-2401-4421-8535-daa42ec1c41d"
 
-DIARIO_PAGSEGURO_EMAIL = config("DIARIO_PAGSEGURO_EMAIL")
-DIARIO_PAGSEGURO_TOKEN = config("DIARIO_PAGSEGURO_TOKEN")
-DIARIO_PAGSEGURO_WS_URL = config("DIARIO_PAGSEGURO_WS_URL")
+DIARIOS_PAGSEGURO_EMAIL = config("DIARIOS_PAGSEGURO_EMAIL")
+DIARIOS_PAGSEGURO_TOKEN = config("DIARIOS_PAGSEGURO_TOKEN")
+DIARIOS_PAGSEGURO_WS_URL = config("DIARIOS_PAGSEGURO_WS_URL")
 
 services.register(
     PagSeguroApiABC,
     PagSeguroApi(
-        email=DIARIO_PAGSEGURO_EMAIL,
-        token=DIARIO_PAGSEGURO_TOKEN,
-        ws_url=DIARIO_PAGSEGURO_WS_URL,
+        email=DIARIOS_PAGSEGURO_EMAIL,
+        token=DIARIOS_PAGSEGURO_TOKEN,
+        ws_url=DIARIOS_PAGSEGURO_WS_URL,
     ),
 )
 
-DIARIO_QUERIDO_DIARIO_API_URL = config("DIARIO_QUERIDO_DIARIO_API_URL")
-DIARIO_QUERIDO_DIARIO_API_THEME = config("DIARIO_QUERIDO_DIARIO_API_THEME")
+DIARIOS_QUERIDO_DIARIO_API_URL = config("DIARIOS_QUERIDO_DIARIO_API_URL")
+DIARIOS_QUERIDO_DIARIO_API_THEME = config("DIARIOS_QUERIDO_DIARIO_API_THEME")
 
 services.register(
     QueridoDiarioABC,
     QueridoDiario(
-        api_url=DIARIO_QUERIDO_DIARIO_API_URL,
-        theme=DIARIO_QUERIDO_DIARIO_API_THEME,
+        api_url=DIARIOS_QUERIDO_DIARIO_API_URL,
+        theme=DIARIOS_QUERIDO_DIARIO_API_THEME,
     ),
 )
 

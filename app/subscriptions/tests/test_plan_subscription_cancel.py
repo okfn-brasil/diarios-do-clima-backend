@@ -18,7 +18,7 @@ class APIPlanSubscriptionCancelTestCase(APITestCase):
     @classmethod
     def setUpUser(cls):
         cls.data_login = {
-            'email': 'email@diariodoclima.org.br',
+            'email': 'email@diariosdoclima.org.br',
             'password': 'password',
         }
 
@@ -96,7 +96,7 @@ class APIPlanSubscriptionCancelTestCase(APITestCase):
 
         self.assertNotEquals(
             str(plan_subscription.plan.pk),
-            settings.DIARIO_DEFAULT_FREE_PLAN_ID,
+            settings.DIARIOS_DEFAULT_FREE_PLAN_ID,
         )
 
         response = self.client.post(
@@ -111,7 +111,7 @@ class APIPlanSubscriptionCancelTestCase(APITestCase):
 
         self.assertEquals(
             str(plan_subscription.plan.pk),
-            settings.DIARIO_DEFAULT_FREE_PLAN_ID,
+            settings.DIARIOS_DEFAULT_FREE_PLAN_ID,
         )
 
     def test_cancel_pagseguro_plan_subscription(self):
@@ -123,7 +123,7 @@ class APIPlanSubscriptionCancelTestCase(APITestCase):
 
         self.assertNotEquals(
             str(start_plan_subscription.plan.pk),
-            settings.DIARIO_DEFAULT_FREE_PLAN_ID,
+            settings.DIARIOS_DEFAULT_FREE_PLAN_ID,
         )
 
         PagSeguroApiMock = mock.Mock(spec=PagSeguroApiABC)
@@ -166,5 +166,5 @@ class APIPlanSubscriptionCancelTestCase(APITestCase):
 
         self.assertEquals(
             str(curent_plan_subscription.plan.pk),
-            settings.DIARIO_DEFAULT_FREE_PLAN_ID,
+            settings.DIARIOS_DEFAULT_FREE_PLAN_ID,
         )

@@ -16,8 +16,8 @@ class PreApprovalNotification:
         "lastEventDate": "2022-04-29T15:53:18-03:00",
         "charge": "AUTO",
         "sender": {
-            "name": "Diário do Clima Bot",
-            "email": "contato@diariodoclima.org.br",
+            "name": "Diários do Clima Bot",
+            "email": "contato@diariosdoclima.org.br",
             "phone": {
                 "areaCode": "63",
                 "number": "999999999"

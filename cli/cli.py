@@ -5,7 +5,7 @@ from .utils import APP_DIR, PROJECT_ROOT, run_command
 
 @click.group()
 def cli():
-    "CLI for executing and developing the diario-do-clima-backend app."
+    "CLI for executing and developing the diarios-do-clima-backend app."
 
 
 @cli.command()
@@ -15,11 +15,11 @@ def cli():
 )
 @click.option(
     "--pod-name",
-    default="diario-do-clima-backend",
+    default="diarios-do-clima-backend",
     help="Set pod name (also containers names prefix).",
 )
 @click.option(
-    "--image-namespace", default="diario-do-clima", help="Set built image namespace."
+    "--image-namespace", default="diarios-do-clima", help="Set built image namespace."
 )
 @click.option("--image-tag", default="latest", help="Set built image tag.")
 @click.option("--superuser", is_flag=True, help="Also setup superuser.")

@@ -7,10 +7,10 @@ User = get_user_model()
 
 def get_or_create_default_plan() -> Plan:
     try:
-        plan = Plan.objects.get(pk=settings.DIARIO_DEFAULT_FREE_PLAN_ID)
+        plan = Plan.objects.get(pk=settings.DIARIOS_DEFAULT_FREE_PLAN_ID)
     except Plan.DoesNotExist:
         plan = Plan(
-            id=settings.DIARIO_DEFAULT_FREE_PLAN_ID,
+            id=settings.DIARIOS_DEFAULT_FREE_PLAN_ID,
             title="Gratis",
             html="<p>Default Free Plan</p>"
         )

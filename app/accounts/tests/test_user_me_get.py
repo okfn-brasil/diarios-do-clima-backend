@@ -13,7 +13,7 @@ class APIUserMeGetTestCase(APITestCase):
         cls.client = APIClient()
 
         cls.data_login = {
-            "email": "email@diariodoclima.org.br",
+            "email": "email@diariosdoclima.org.br",
             "password": "password",
         }
 
@@ -58,5 +58,5 @@ class APIUserMeGetTestCase(APITestCase):
         self.assertIsNotNone(plan)
         
         plan_id = plan.get('id', None)
-        self.assertEquals(plan_id, settings.DIARIO_DEFAULT_FREE_PLAN_ID)
+        self.assertEquals(plan_id, settings.DIARIOS_DEFAULT_FREE_PLAN_ID)
 

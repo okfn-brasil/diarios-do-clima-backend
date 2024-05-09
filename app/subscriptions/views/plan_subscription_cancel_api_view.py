@@ -34,7 +34,7 @@ class PlanSubscriptionCancelAPIView(APIView):
         )
         plan: Plan = plan_subscription.plan
 
-        if str(plan.id) == settings.DIARIO_DEFAULT_FREE_PLAN_ID:
+        if str(plan.id) == settings.DIARIOS_DEFAULT_FREE_PLAN_ID:
             raise Exception("can not cancel default free plan")
 
         if plan.to_charge():
