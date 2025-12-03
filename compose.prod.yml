@@ -1,7 +1,6 @@
 services:
   diarios-do-clima-backend-server:
     image: ghcr.io/okfn-brasil/diarios-do-clima-backend:${IMAGE_TAG:-main}
-    build: null
     links:
       - diarios-do-clima-redis:redis
     networks:
@@ -18,7 +17,6 @@ services:
 
   diarios-do-clima-backend-celery-beat:
     image: ghcr.io/okfn-brasil/diarios-do-clima-backend:${IMAGE_TAG:-main}
-    build: null
     links:
       - diarios-do-clima-redis:redis
     networks:
@@ -28,7 +26,6 @@ services:
 
   diarios-do-clima-backend-celery-worker:
     image: ghcr.io/okfn-brasil/diarios-do-clima-backend:${IMAGE_TAG:-main}
-    build: null
     links:
       - diarios-do-clima-redis:redis
     networks:
