@@ -1,22 +1,104 @@
 services:
   diarios-do-clima-backend-server:
     image: ghcr.io/okfn-brasil/diarios-do-clima-backend:${IMAGE_TAG:-main}
-    links:
-      - diarios-do-clima-redis:redis
+    environment:
+      - DEFAULT_FROM_EMAIL=${DEFAULT_FROM_EMAIL}
+      - SERVER_EMAIL=${SERVER_EMAIL}
+      - DIARIOS_SECRET_KEY=${DIARIOS_SECRET_KEY}
+      - DIARIOS_DEBUG=${DIARIOS_DEBUG:-False}
+      - DIARIOS_ALLOWED_HOSTS=${DIARIOS_ALLOWED_HOSTS}
+      - DIARIOS_CORS_ALLOWED_ORIGINS=${DIARIOS_CORS_ALLOWED_ORIGINS}
+      - DIARIOS_ALLOWED_ORIGIN_REGEXES=${DIARIOS_ALLOWED_ORIGIN_REGEXES}
+      - DIARIOS_CSRF_TRUSTED_ORIGINS=${DIARIOS_CSRF_TRUSTED_ORIGINS}
+      - DIARIOS_DB_URL=${DIARIOS_DB_URL}
+      - DIARIOS_PAGSEGURO_EMAIL=${DIARIOS_PAGSEGURO_EMAIL}
+      - DIARIOS_PAGSEGURO_TOKEN=${DIARIOS_PAGSEGURO_TOKEN}
+      - DIARIOS_PAGSEGURO_WS_URL=${DIARIOS_PAGSEGURO_WS_URL}
+      - DIARIOS_QUERIDO_DIARIO_API_URL=${DIARIOS_QUERIDO_DIARIO_API_URL}
+      - DIARIOS_QUERIDO_DIARIO_API_THEME=${DIARIOS_QUERIDO_DIARIO_API_THEME}
+      - STORAGE_REGION=${STORAGE_REGION}
+      - STORAGE_ENDPOINT=${STORAGE_ENDPOINT}
+      - STORAGE_ACCESS_KEY=${STORAGE_ACCESS_KEY}
+      - STORAGE_ACCESS_SECRET=${STORAGE_ACCESS_SECRET}
+      - STORAGE_BUCKET=${STORAGE_BUCKET}
+      - AWS_SES_REGION=${AWS_SES_REGION}
+      - AWS_SES_ACCESS_KEY=${AWS_SES_ACCESS_KEY}
+      - AWS_SES_ACCESS_SECRET=${AWS_SES_ACCESS_SECRET}
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
+      - EMAIL_HOST=${EMAIL_HOST}
+      - EMAIL_HOST_USER=${EMAIL_HOST_USER}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+      - EMAIL_PORT=${EMAIL_PORT}
+      - STATIC_URL=${STATIC_URL}
+      - FRONT_BASE_URL=${FRONT_BASE_URL}
+      - QUOTATION_TO_EMAIL=${QUOTATION_TO_EMAIL}
+      - PROJECT_TITLE=${PROJECT_TITLE}
+      - ALERT_HOUR=${ALERT_HOUR}
+      - ALERT_MINUTE=${ALERT_MINUTE}
+      - ALERT_EMAIL_SUBJECT=${ALERT_EMAIL_SUBJECT}
     networks:
       - frontend
       - backend
     labels:
+
       - "traefik.enable=true"
-      - "traefik.http.routers.diarios-backend.rule=Host(`${BACKEND_DOMAIN:-backend.example.com}`)"
-      - "traefik.http.routers.diarios-backend.entrypoints=websecure"
-      - "traefik.http.routers.diarios-backend.tls=true"
-      - "traefik.http.routers.diarios-backend.tls.certresolver=letsencrypt"
-      - "traefik.http.services.diarios-backend.loadbalancer.server.port=8000"
+
+      # Roteamento de subdomínio do Backend (backend-api.dominio)
+      - "traefik.http.routers.querido-diario-backend.rule=Host(`${BACKEND_DOMAIN}`)"
+      - "traefik.http.routers.querido-diario-backend.entrypoints=websecure"
+      - "traefik.http.routers.querido-diario-backend.tls.certresolver=${CERT_RESOLVER:-leresolver}"
+      - "traefik.http.routers.querido-diario-backend.middlewares=cors-headers,security-headers,compression"
+      - "traefik.http.services.querido-diario-backend.loadbalancer.server.port=8000"
+
+      # Redirecionamento www.backend-api.domain para backend-api.domain (HTTPS)
+      - "traefik.http.routers.querido-diario-backend-www-redirect.rule=Host(`www.backend-api.${DOMAIN}`)"
+      - "traefik.http.routers.querido-diario-backend-www-redirect.entrypoints=websecure"
+      - "traefik.http.routers.querido-diario-backend-www-redirect.tls.certresolver=${CERT_RESOLVER:-leresolver}"
+      - "traefik.http.routers.querido-diario-backend-www-redirect.middlewares=www-to-non-www"
+      - "traefik.http.routers.querido-diario-backend-www-redirect.priority=200"
+
       - "traefik.docker.network=frontend"
 
   diarios-do-clima-backend-celery-beat:
     image: ghcr.io/okfn-brasil/diarios-do-clima-backend:${IMAGE_TAG:-main}
+    env_file: null
+    environment:
+      - DEFAULT_FROM_EMAIL=${DEFAULT_FROM_EMAIL}
+      - SERVER_EMAIL=${SERVER_EMAIL}
+      - DIARIOS_SECRET_KEY=${DIARIOS_SECRET_KEY}
+      - DIARIOS_DEBUG=${DIARIOS_DEBUG:-False}
+      - DIARIOS_ALLOWED_HOSTS=${DIARIOS_ALLOWED_HOSTS}
+      - DIARIOS_CORS_ALLOWED_ORIGINS=${DIARIOS_CORS_ALLOWED_ORIGINS}
+      - DIARIOS_ALLOWED_ORIGIN_REGEXES=${DIARIOS_ALLOWED_ORIGIN_REGEXES}
+      - DIARIOS_CSRF_TRUSTED_ORIGINS=${DIARIOS_CSRF_TRUSTED_ORIGINS}
+      - DIARIOS_DB_URL=${DIARIOS_DB_URL}
+      - DIARIOS_PAGSEGURO_EMAIL=${DIARIOS_PAGSEGURO_EMAIL}
+      - DIARIOS_PAGSEGURO_TOKEN=${DIARIOS_PAGSEGURO_TOKEN}
+      - DIARIOS_PAGSEGURO_WS_URL=${DIARIOS_PAGSEGURO_WS_URL}
+      - DIARIOS_QUERIDO_DIARIO_API_URL=${DIARIOS_QUERIDO_DIARIO_API_URL}
+      - DIARIOS_QUERIDO_DIARIO_API_THEME=${DIARIOS_QUERIDO_DIARIO_API_THEME}
+      - STORAGE_REGION=${STORAGE_REGION}
+      - STORAGE_ENDPOINT=${STORAGE_ENDPOINT}
+      - STORAGE_ACCESS_KEY=${STORAGE_ACCESS_KEY}
+      - STORAGE_ACCESS_SECRET=${STORAGE_ACCESS_SECRET}
+      - STORAGE_BUCKET=${STORAGE_BUCKET}
+      - AWS_SES_REGION=${AWS_SES_REGION}
+      - AWS_SES_ACCESS_KEY=${AWS_SES_ACCESS_KEY}
+      - AWS_SES_ACCESS_SECRET=${AWS_SES_ACCESS_SECRET}
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
+      - EMAIL_HOST=${EMAIL_HOST}
+      - EMAIL_HOST_USER=${EMAIL_HOST_USER}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+      - EMAIL_PORT=${EMAIL_PORT}
+      - STATIC_URL=${STATIC_URL}
+      - FRONT_BASE_URL=${FRONT_BASE_URL}
+      - QUOTATION_TO_EMAIL=${QUOTATION_TO_EMAIL}
+      - PROJECT_TITLE=${PROJECT_TITLE}
+      - ALERT_HOUR=${ALERT_HOUR}
+      - ALERT_MINUTE=${ALERT_MINUTE}
+      - ALERT_EMAIL_SUBJECT=${ALERT_EMAIL_SUBJECT}
     links:
       - diarios-do-clima-redis:redis
     networks:
@@ -26,6 +108,43 @@ services:
 
   diarios-do-clima-backend-celery-worker:
     image: ghcr.io/okfn-brasil/diarios-do-clima-backend:${IMAGE_TAG:-main}
+    env_file: null
+    environment:
+      - DEFAULT_FROM_EMAIL=${DEFAULT_FROM_EMAIL}
+      - SERVER_EMAIL=${SERVER_EMAIL}
+      - DIARIOS_SECRET_KEY=${DIARIOS_SECRET_KEY}
+      - DIARIOS_DEBUG=${DIARIOS_DEBUG:-False}
+      - DIARIOS_ALLOWED_HOSTS=${DIARIOS_ALLOWED_HOSTS}
+      - DIARIOS_CORS_ALLOWED_ORIGINS=${DIARIOS_CORS_ALLOWED_ORIGINS}
+      - DIARIOS_ALLOWED_ORIGIN_REGEXES=${DIARIOS_ALLOWED_ORIGIN_REGEXES}
+      - DIARIOS_CSRF_TRUSTED_ORIGINS=${DIARIOS_CSRF_TRUSTED_ORIGINS}
+      - DIARIOS_DB_URL=${DIARIOS_DB_URL}
+      - DIARIOS_PAGSEGURO_EMAIL=${DIARIOS_PAGSEGURO_EMAIL}
+      - DIARIOS_PAGSEGURO_TOKEN=${DIARIOS_PAGSEGURO_TOKEN}
+      - DIARIOS_PAGSEGURO_WS_URL=${DIARIOS_PAGSEGURO_WS_URL}
+      - DIARIOS_QUERIDO_DIARIO_API_URL=${DIARIOS_QUERIDO_DIARIO_API_URL}
+      - DIARIOS_QUERIDO_DIARIO_API_THEME=${DIARIOS_QUERIDO_DIARIO_API_THEME}
+      - STORAGE_REGION=${STORAGE_REGION}
+      - STORAGE_ENDPOINT=${STORAGE_ENDPOINT}
+      - STORAGE_ACCESS_KEY=${STORAGE_ACCESS_KEY}
+      - STORAGE_ACCESS_SECRET=${STORAGE_ACCESS_SECRET}
+      - STORAGE_BUCKET=${STORAGE_BUCKET}
+      - AWS_SES_REGION=${AWS_SES_REGION}
+      - AWS_SES_ACCESS_KEY=${AWS_SES_ACCESS_KEY}
+      - AWS_SES_ACCESS_SECRET=${AWS_SES_ACCESS_SECRET}
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
+      - EMAIL_HOST=${EMAIL_HOST}
+      - EMAIL_HOST_USER=${EMAIL_HOST_USER}
+      - EMAIL_HOST_PASSWORD=${EMAIL_HOST_PASSWORD}
+      - EMAIL_PORT=${EMAIL_PORT}
+      - STATIC_URL=${STATIC_URL}
+      - FRONT_BASE_URL=${FRONT_BASE_URL}
+      - QUOTATION_TO_EMAIL=${QUOTATION_TO_EMAIL}
+      - PROJECT_TITLE=${PROJECT_TITLE}
+      - ALERT_HOUR=${ALERT_HOUR}
+      - ALERT_MINUTE=${ALERT_MINUTE}
+      - ALERT_EMAIL_SUBJECT=${ALERT_EMAIL_SUBJECT}
     links:
       - diarios-do-clima-redis:redis
     networks:
