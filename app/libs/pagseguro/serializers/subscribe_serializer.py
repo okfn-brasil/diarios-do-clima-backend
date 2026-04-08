@@ -1,4 +1,3 @@
-from libs.utils.datetime import datetime_to_date_str
 class SubscribeSerializer:
 
     def __init__(self, user, plan_subscription, credit_card, ip: str) -> None:
@@ -7,70 +6,49 @@ class SubscribeSerializer:
         self.credit_card = credit_card
         self.ip = ip
 
-    def get_sender_phone(self, user) -> dict:
-
+    def get_customer_phone(self, user) -> dict:
         return {
-            "areaCode": user.phone.area_code,
+            "country": "55",
+            "area": user.phone.area_code,
             "number": user.phone.number,
+            "type": "MOBILE"
         }
 
-    def get_sender_address(self, user) -> dict:
+    def get_plan(self, plan) -> dict:
         return {
-            "street": user.address.street,
-            "number": user.address.number,
-            "complement": user.address.complement,
-            "district": user.address.district,
-            "city": user.address.city,
-            "state": user.address.state,
-            "country": user.address.country,
-            "postalCode": user.address.postal_code,
+            "id": plan.pagseguro_plan_id
         }
-
-    def get_plan_code(self, plan) -> str:
-        return plan.pagseguro_plan_id
 
     def get_subscription_reference(self, plan_subscription) -> str:
         return str(plan_subscription.pk)
 
-    def get_sender(self, user, credit_card, ip: str) -> dict:
+    def get_customer(self, user, credit_card) -> dict:
+        tax_id = credit_card.cpf.replace(".", "").replace("-", "") if credit_card.cpf else ""
         return {
             "name": credit_card.holder_name,
             "email": user.email,
-            "ip": ip,
-            "phone": self.get_sender_phone(user=user),
-            "address": self.get_sender_address(user=user),
-            "documents": [
-                {
-                    "type": "CPF",
-                    "value": credit_card.cpf
-                }
+            "tax_id": tax_id,
+            "phones": [
+                self.get_customer_phone(user=user)
             ]
         }
 
-    def get_payment_method(self, user, credit_card) -> dict:
+    def get_payment_method(self, credit_card) -> dict:
         return {
-            "type": "CREDITCARD",
-            "creditCard": {
+            "type": "CREDIT_CARD",
+            "credit_card": {
                 "token": credit_card.token,
                 "holder": {
-                    "name": credit_card.holder_name,
-                    "birthDate": datetime_to_date_str(date=credit_card.holder_birth_date),
-                    "documents": [
-                        {
-                            "type": "CPF",
-                            "value": credit_card.cpf
-                        }
-                    ],
-                    "phone": self.get_sender_phone(user=user),
+                    "name": credit_card.holder_name
                 }
             }
         }
 
     def json(self) -> dict:
         data = {
-            "plan": self.get_plan_code(plan=self.plan_subscription.plan),
-            "reference": self.get_subscription_reference(plan_subscription=self.plan_subscription),
-            "sender": self.get_sender(user=self.user, credit_card=self.credit_card, ip=self.ip),
-            "paymentMethod": self.get_payment_method(user=self.user, credit_card=self.credit_card)
+            "reference_id": self.get_subscription_reference(plan_subscription=self.plan_subscription),
+            "plan": self.get_plan(plan=self.plan_subscription.plan),
+            "customer": self.get_customer(user=self.user, credit_card=self.credit_card),
+            "payment_method": self.get_payment_method(credit_card=self.credit_card)
         }
         return data
