@@ -1,101 +1,135 @@
-import xml.etree.ElementTree as ET
 import requests
 from .pag_seguro_api_abc import PagSeguroApiABC, PreApprovalNotification
 from .serializers import SubscribeSerializer, CreditCardChangeData
 from .exceptions import PreApprovalsValidationException, GenericSessionError
 
-from requests.adapters import HTTPAdapter, Retry
-
 
 class PagSeguroApi(PagSeguroApiABC):
     headers = {
-        "Accept": "application/vnd.pagseguro.com.br.v3+json;charset=ISO-8859-1",
-        "Content-Type": "application/json; charset=UTF-8"
+        "Accept": "application/json",
+        "Content-Type": "application/json"
     }
 
-    def __init__(self, email: str, token: str, ws_url: str) -> None:
-        self.email = email
+    def __init__(self, token: str, ws_url: str) -> None:
         self.token = token
         self.ws_url = ws_url
-        self.auth = f"email={self.email}&token={self.token}"
+
+    def _get_auth_headers(self):
+        return {
+            **self.headers,
+            "Authorization": f"Bearer {self.token}"
+        }
 
     def get_session(self) -> str:
-        request_session = requests.Session()
-        retries = Retry(total=5, backoff_factor=1,
-                        status_forcelist=[502, 503, 504])
-        request_session.mount('http://', HTTPAdapter(max_retries=retries))
-        request_session.mount('https://', HTTPAdapter(max_retries=retries))
+        # Em V3, a tokenizacao usa Public Key inves de Session. 
+        # Retornaremos a public key para que a mesma view_session anterior passe a devolver a public key pro frontend.
+        url = f"{self.ws_url}/public-keys"
+        response = requests.post(
+            url, 
+            headers=self._get_auth_headers(), 
+            json={"type": "card"}
+        )
 
-        url = f"{self.ws_url}/v2/sessions?{self.auth}"
-        response = request_session.post(url)
+        if response.status_code not in [200, 201]:
+            raise GenericSessionError(f"Erro ao gerar public key: {response.text}")
 
-        if response.status_code != 200:
-            raise GenericSessionError("erro generating session")
-
-        session = ET.fromstring(response.text)
-        id = session.find('id')
-        return id.text
+        return response.json()['public_key']
 
     def subscription_create(self, serializer: SubscribeSerializer) -> str:
-        url = f"{self.ws_url}/pre-approvals?{self.auth}"
-
+        url = f"{self.ws_url}/subscriptions"
+        
         response = requests.post(
             url,
             json=serializer.json(),
-            headers=self.headers
+            headers=self._get_auth_headers()
         )
 
-        if response.status_code != 200:
+        if response.status_code not in [200, 201]:
             raise PreApprovalsValidationException(response.json())
 
         data = response.json()
-        code = data['code']
-        return code
+        return data['id']
 
     def subscription_cancel(self, subscription_code: str) -> None:
-        url = f"{self.ws_url}/pre-approvals/{subscription_code}/cancel?{self.auth}"
+        url = f"{self.ws_url}/subscriptions/{subscription_code}/cancel"
 
-        response = requests.put(url, headers=self.headers)
+        response = requests.put(url, headers=self._get_auth_headers())
 
-        if response.status_code != 204:
-            raise Exception("something went wrong")
+        if response.status_code not in [200, 204]:
+            raise Exception("something went wrong canceling subscription")
 
     def subscription_get_notification(self, notification_code: str) -> PreApprovalNotification:
-        url = f"{self.ws_url}/pre-approvals/notifications/{notification_code}?{self.auth}"
-        response = requests.get(url, headers=self.headers)
+        # A API V3 pode devolver toda a consulta da assinatura atravsedes de GET /subscriptions/{id}
+        url = f"{self.ws_url}/subscriptions/{notification_code}"
+        response = requests.get(url, headers=self._get_auth_headers())
 
         if response.status_code != 200:
             raise Exception(response.json())
 
         data = response.json()
+        
+        # Map V3 status to V2 internal statuses
+        v3_status = data['status']
+        v2_status = v3_status
+        if v3_status == 'CANCELED':
+            v2_status = 'CANCELLED'
+            
         return PreApprovalNotification(
-            code=data['code'],
-            date=data['date'],
-            status=data['status'],
+            code=data['id'],
+            date=data.get('created_at', ''),
+            status=v2_status,
         )
 
     def subscription_change_credit_card(self, subscription_code: str, data: CreditCardChangeData) -> None:
-        url = f"{self.ws_url}/pre-approvals/{subscription_code}/payment-method?{self.auth}"
+        url_sub = f"{self.ws_url}/subscriptions/{subscription_code}"
+        response_sub = requests.get(url_sub, headers=self._get_auth_headers())
+        if response_sub.status_code != 200:
+            raise Exception(f"Failed to fetch subscription for changing card: {response_sub.text}")
+        
+        customer_id = response_sub.json().get('customer', {}).get('id')
+        if not customer_id:
+            raise Exception("Subscription does not have an associated customer_id in V3")
 
-        response = requests.put(url, json=data.json(), headers=self.headers)
+        url = f"{self.ws_url}/customers/{customer_id}/billing_info"
+        
+        # O JSON devolvido por data.json() contem a estrutura esperada para este endpoint.
+        # Que eh {"payment_method": {"type": "CREDIT_CARD", "credit_card": {...}}}
+        # Muitas vezes api.pagseguro.com eh requerido para clientes em vez do ws_url (sandbox/etc), 
+        # mas manteremos ws_url/customers
+        response = requests.put(url, json=data.json(), headers=self._get_auth_headers())
 
-        if response.status_code != 204:
+        if response.status_code not in [200, 204]:
             raise Exception(response.json())
 
     def subscription_orders(self, subscription_code: str):
-        url = f"{self.ws_url}/pre-approvals/{subscription_code}/payment-orders?{self.auth}"
-        response = requests.get(url, headers=self.headers)
+        url = f"{self.ws_url}/subscriptions/{subscription_code}/invoices"
+        response = requests.get(url, headers=self._get_auth_headers())
         if response.status_code != 200:
             raise Exception(response.json())
 
         data = response.json()
-        from .serializers.models import OrdersResult, Order
-        result = OrdersResult(**data)
-        orders = [Order(**result.paymentOrders[orderKey])
-                  for orderKey in result.paymentOrders]
+        invoices = data.get('invoices', [])
+        
+        orders = []
+        for invoice in invoices:
+            status_map = {
+                "CANCELED": 6, # Ajustando status baseados na API V3 vs Models de V2 
+                "PAID": 5, 
+                "PAYMENT_PENDING": 1,
+                "WAITING": 1,
+            }
+            order_status = status_map.get(invoice.get("status", "WAITING"), 1)
+            orders.append({
+                "code": invoice.get("id"),
+                "status": order_status,
+                "amount": float(invoice.get("amount", {}).get("value", 0)) / 100.0,
+                "schedulingDate": invoice.get("due_date", invoice.get("created_at")),
+                "lastEventDate": invoice.get("created_at")
+            })
+        
         orders.sort(
             reverse=True,
-            key=lambda order: order.schedulingDate
+            key=lambda order: order["schedulingDate"]
         )
 
-        return [order.dict() for order in orders]
+        return orders

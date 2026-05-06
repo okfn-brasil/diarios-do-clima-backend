@@ -16,9 +16,6 @@ from ..models import (
 
 from libs.pagseguro import PagSeguroApiABC
 from libs.pagseguro.serializers import (
-    BillingAddressData,
-    BillingDocumentData,
-    BillingPhoneData,
     CreditCardHolderData,
     CreditCardChangeData,
 )
@@ -31,40 +28,9 @@ from django.db import transaction
 from accounts.models import User
 
 
-def get_billing_phone(user: User) -> BillingPhoneData:
-    phone: Phone = user.phone
-    return BillingPhoneData(
-        area_code=phone.area_code,
-        number=phone.number,
-    )
-
-
-def get_billing_address(user: User) -> BillingAddressData:
-    address: Address = user.address
-    return BillingAddressData(
-        street=address.street,
-        number=address.number,
-        complement=address.complement,
-        district=address.district,
-        city=address.city,
-        state=address.state,
-        country=address.country,
-        postal_code=address.postal_code,
-    )
-
-
 def get_credit_card_holder(user: User, credit_card: CreditCard) -> CreditCardHolderData:
     return CreditCardHolderData(
-        name=credit_card.holder_name,
-        biling_phone=get_billing_phone(user=user),
-        billing_address=get_billing_address(user=user),
-        bith_date=datetime_to_date_str(date=credit_card.holder_birth_date),
-        documents=[
-            BillingDocumentData(
-                type='CPF',
-                value=credit_card.cpf,
-            ),
-        ]
+        name=credit_card.holder_name
     )
 
 
